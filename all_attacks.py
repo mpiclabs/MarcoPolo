@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from bgp_hijack import attack
+from round import attack
 import json
 import time
 import signal
@@ -9,25 +9,16 @@ import sys
 import traceback
 from utils.node import Node
 from utils.loggers import http_logger, summary_logger, error_logger
+from utils.loaders import load_config, load_state
 
 
-def load_config():
-  try:
-    with open('configure/config.json', 'r') as file:
-      config = json.load(file)
-      return config
-  except Exception as error:
-    raise error
-  
-def load_state():
-  try:
-      with open('results/state.json', 'r') as file:
-          state_data = json.load(file)
-      return state_data
-  except Exception as error:
-      raise error
+
   
 def initialize_result_files(ca_list, node_names):
+  """
+  For each CA, creates an emoty results file, stored at results/{ca}_results.json.
+  Uses CA's to name files, and node names to name dictionary keys in file.
+  """
   data = {}
   for node in node_names:
     other_nodes = {other_node: [] for other_node in node_names if other_node!=node}
@@ -38,6 +29,9 @@ def initialize_result_files(ca_list, node_names):
       
   
 def record_results(attack_results):
+  """
+  Updates results files.
+  """
   for ca in attack_results.keys(): 
     with open(f'results/{ca}_results.json', 'r') as file:
       results = json.load(file)
@@ -52,7 +46,9 @@ def record_results(attack_results):
   
 
 
-if __name__ == "__main__":
+def all_attacks():
+
+  # Load info needed for game
   config = load_config()
   state = load_state()
   ca_list = config['certificate_authorities']
@@ -73,6 +69,8 @@ if __name__ == "__main__":
         state['curr_node_a'] = node_a.name
         state['curr_node_b'] = node_b.name
         json.dump(state, file)
+      
+      #run attack and record results
       attack_results = attack(ca_list, node_a, node_b)
       record_results(attack_results)
       for ca in ca_list:
@@ -83,8 +81,5 @@ if __name__ == "__main__":
         summary_logger.info(f"Pair: {node_a.name:<15}, {node_b.name:<15}:\t{node_a_ips_len:<2}, {node_b_ips_len:<2}\tTotal: {total:>2}\tTime: {time:.2f}s")
 
 
-
-
-  with open('results/state.json', 'w') as file:
-    state['mid_test'] = False
-    json.dump(state, file)
+if __name__=="__main__":
+  all_attacks()

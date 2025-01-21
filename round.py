@@ -12,41 +12,45 @@ import json
 from bgp_pathfinder.pathfinder import main as pathfinder
 from bgp_pathfinder.send_cmd import main as send_cmd
 from bgp_pathfinder.engines.vultr import copy_file_from_node_name as copy_file
-from cert_req_constructor import CertificateRequestFactory as CertReqFactory
+from turn import TurnFactory
 from utils.node import Node, NodeRequestError, NodeResponseError
 
 dir_path = os.path.dirname(os.path.realpath(__file__)) 
 
+class Round():
+  def __init__(self, ca_list, node_a: Node, node_b: Node):
+    self.ca_list = ca_list
+    self.node_a = node_a
+    self.node_b = node_b
+    self.time = None
+    self.results = {ca: {node_a: [], node_b: []} for ca in ca_list}
 
-def attack(ca_list, node_a: Node, node_b: Node):
-  args = ["-d", node_a.name,  node_b.name, "-i", "66.180.191.0/24"]
-  pathfinder(["-w"])  # make announcments-- equivalent of calling pathfinder from command line with above args
-  pathfinder(args)    # make announcments-- equivalent of calling pathfinder from command line with above args
+  def attack(self, ca_list, node_a: Node, node_b: Node):
+    args = ["-d", node_a.name,  node_b.name, "-i", "66.180.191.0/24"]
+    pathfinder(["-w"])  # make announcments-- equivalent of calling pathfinder from command line with above args
+    pathfinder(args)    # make announcments-- equivalent of calling pathfinder from command line with above args
 
-  # wait five minutes
-  time.sleep(300)
-  
-  
-  with open(f"{dir_path}/results/http.log", 'a') as file:
-      file.write(f"{node_a.name}, {node_b.name}:\n")
-  
-  start = time.time()
-  attack_results = {}
-  for ca in ca_list:
-    attack_results[ca] = {}
-    cert_req =CertReqFactory.create(ca, node_a, node_b)
-    token = cert_req.send_request()
-    try:
-      attack_results[ca][node_a.name], attack_results[ca][node_b.name] = cert_req.get_results(token)
-      end = time.time()
-      attack_results[ca]['time'] = end-start
-    except NodeRequestError as e:
-      raise(e)
+    # wait five minutes
+    time.sleep(300)
+    
+    with open(f"{dir_path}/results/http.log", 'a') as file:
+        file.write(f"{node_a.name}, {node_b.name}:\n")
+    
+    start = time.time()
+    for ca in ca_list:
+      turn =TurnFactory.create(ca, node_a, node_b)
+      token = turn.say_marco()
+      try:
+        self.results[ca][node_a.name], self.results[ca][node_b.name] = turn.listen_polo(token)
+        end = time.time()
+        self.time = end-start
+      except NodeRequestError as e:
+        raise(e)
 
-  end = time.time()
-  print("Total time for all attacks between this pair of nodes= ", end-start)
-  
-  return attack_results
+    end = time.time()
+    print("Total time for all attacks between this pair of nodes= ", end-start)
+    
+    return self.results
 
 if __name__ == "__main__":
   script_dir = os.path.dirname(os.path.abspath(__file__))

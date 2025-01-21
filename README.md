@@ -78,3 +78,8 @@ install snapd, install cerbot. take the server IP address and hardcode that into
 need authenticator.sh, cleanup.sh, webroot, certbot_server.log
 python server running as follows: 
 python3 -m http.server 80 --directory ~/certbot_tools/webroot > ~/certbot_tools/certbot_server.log 2>&1 &
+ufw allow 80 
+include openMpic key as env var if you'll be testing that
+
+some things that have been missing:
+opemmpic key in envvar, vultr key and ssh id in variables.tf, ssh key in vultr.pem or wasn't configured to 700, 
