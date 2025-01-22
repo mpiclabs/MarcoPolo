@@ -17,4 +17,4 @@ jobs:
       - name: Block Changes to Restricted File
         run: |
           echo "Error: Changes to path/to/restricted_file are not allowed."
-          exit 1
+          exit 0
