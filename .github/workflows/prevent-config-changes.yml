@@ -31,6 +31,4 @@ jobs:
         if: contains(steps.changes.outputs.changed_files, 'path/to/restricted_file')
         run: |
           echo "Error: Changes to path/to/restricted_file are not allowed."
-          exit 1cted
-        if: ${{ success() }}
-        run: echo "No changes to restricted files. Proceeding..."
+          exit 1
