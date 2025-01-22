@@ -1,0 +1,20 @@
+name: Prevent Changes to Specific File
+
+on:
+  push:
+    paths:
+      - "configure/pathfinder_config"
+      - "bgp_pathfinder/config"
+  pull_request:
+    paths:
+      - "configure/pathfinder_config"
+      - "bgp_pathfinder/config"
+
+jobs:
+  block-changes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Block Changes to Restricted File
+        run: |
+          echo "Error: Changes to path/to/restricted_file are not allowed."
+          exit 1
