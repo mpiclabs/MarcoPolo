@@ -1,4 +1,4 @@
 {
   "engine": "vultr",
-  "nodes": [  ]
+  "nodes": [ "first", "second" ]
 }
