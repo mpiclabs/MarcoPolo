@@ -1,0 +1,58 @@
+{
+	"__default": {
+		"key": "vultr.pem",
+		"user": "root",
+		"template": "bird6-default.conf"
+	},
+
+	"vultrla": {
+		"key": "vultr.pem",
+		"ip" : "45.32.70.253",
+		"user": "root",
+		"template": "bird6-la.conf"
+	},
+	"vultrwarsaw": {
+		"key": "vultr.pem",
+		"ip" : "70.34.246.41",
+		"user": "root",
+		"template": "bird6-warsaw.conf"
+	},
+	"vultrnj2": {
+		"key": "vultr.pem",
+		"ip" : "45.63.10.143",
+		"user": "root",
+		"template": "bird6-nj2.conf"
+	},
+	"vultrmexicocity": {
+		"ip" : "216.238.74.125"
+	},
+	"vultrsiliconvalley": {
+		"ip" : "149.28.213.217"
+	},
+	"vultrsaopaulo": {
+		"ip": "216.238.108.72"
+	}
+}
+
+
+{
+	"__default": {
+		"key": "vultr.pem",
+		"user": "root",
+		"template": "bird6-default.conf"
+	},
+	"vultrla": {
+		"key": "vultr.pem",
+		"ip" : "45.32.70.253",
+		"user": "root",
+		"template": "bird6-la.conf"
+	},
+	"vultrnj2": {
+		"key": "vultr.pem",
+		"ip" : "45.63.10.143",
+		"user": "root",
+		"template": "bird6-nj2.conf"
+	},
+	"vultrlalarge": "45.32.73.183",
+	"vultrsaopaulolarge": "216.238.104.207"
+}

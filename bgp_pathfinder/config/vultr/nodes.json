@@ -1,0 +1,8 @@
+{
+  "__default": {
+    "key": "vultr.pem",
+    "user": "root",
+    "template": "bird6-default.conf",
+    "template4": "bird-default.conf"
+  }
+}

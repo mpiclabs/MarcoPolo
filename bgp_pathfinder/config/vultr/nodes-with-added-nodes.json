@@ -1,0 +1,5 @@
+{"__default": {"key": "vultr.pem", "user": "root", "template": "bird6-default.conf"},
+"vultrlalarge": "45.32.73.183",
+"vultrstockholmlarge": "65.20.115.127",
+"vultratlantatest": "155.138.215.166",
+ "vultramsterdam": "136.244.107.213", "vultratlanta": "155.138.207.243", "vultrchicago": "45.63.78.148", "vultrdallas": "45.32.193.205", "vultrfrankfurt": "45.32.159.199", "vultrla": "149.28.87.133", "vultrlondon": "78.141.243.130", "vultrmadrid": "65.20.98.166", "vultrmelbourne": "139.84.193.163", "vultrmexicocity": "216.238.74.39", "vultrmiami": "149.28.99.88", "vultrmumbai": "65.20.74.248", "vultrnj2": "45.63.13.38", "vultrparis": "104.238.190.24", "vultrsaopaulo": "216.238.104.216", "vultrseattle": "45.77.213.207", "vultrsiliconvalley": "45.32.129.143", "vultrsingapore": "207.148.117.65", "vultrstockholm": "70.34.209.121", "vultrsydney": "45.77.51.59", "vultrtokyo": "167.179.87.76", "vultrtoronto": "149.248.58.169", "vultrwarsaw": "70.34.246.252"}
