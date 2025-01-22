@@ -14,7 +14,29 @@ jobs:
   block-changes:
     runs-on: ubuntu-latest
     steps:
-      - name: Block Changes to Restricted File
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: List Changed Files
         run: |
-          echo "Error: Changes to path/to/restricted_file are not allowed."
-          exit 0
+          # Get the list of changed files
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+
+      - name: Check for Changes to Restricted Files
+        run: |
+          # Get the list of changed files
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          
+          # Check for restricted paths
+          for file in configure/pathfinder_config bgp_pathfinder/config; do
+            if echo "$CHANGED_FILES" | grep -q "$file"; then
+              echo "Error: Changes to $file are not allowed."
+              exit 1
+            fi
+          done
+
+      - name: No Restricted Changes Detected
+        if: ${{ success() }}
+        run: echo "No changes to restricted files. Proceeding..."
