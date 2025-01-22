@@ -2,10 +2,16 @@ name: Prevent Changes to Specific File
 
 on:
   push:
+    branches:
+      - "flask"
+      - "test"
     paths:
       - "configure/pathfinder_config"
       - "bgp_pathfinder/config"
   pull_request:
+    branches:
+      - "flask"
+      - "test"
     paths:
       - "configure/pathfinder_config"
       - "bgp_pathfinder/config"
