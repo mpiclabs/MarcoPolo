@@ -5,16 +5,10 @@ on:
     branches:
       - "flask"
       - "test"
-    paths:
-      - "configure/pathfinder_config/**"
-      - "bgp_pathfinder/config/**"
   pull_request:
     branches:
       - "flask"
       - "test"
-    paths:
-      - "configure/pathfinder_config/**"
-      - "bgp_pathfinder/config/**"
 
 jobs:
   block-changes:
