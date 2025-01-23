@@ -1,6 +1,6 @@
 {
   "engine": "vultr",
-  "nodes": [ "blah" ],
+  "nodes": [ "bla" ],
   "use-as-path-poisoning": false,
   "ignore-hops": 2,
   "prpagation-delay-min": 5,
