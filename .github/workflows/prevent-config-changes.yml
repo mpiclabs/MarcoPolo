@@ -14,21 +14,31 @@ jobs:
   block-changes:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
-
-      - name: Get the list of changed files
-        id: changes
-        run: |
-          BASE_REF=${{ github.event.pull_request.base.sha }}
-          HEAD_REF=${{ github.event.pull_request.head.sha }}
-          CHANGED_FILES=$(git diff --name-only $BASE_REF $HEAD_REF)
-          echo "Changed files:"
-          echo "$CHANGED_FILES"
-          echo "::set-output name=changed_files::$CHANGED_FILES"
-
-      - name: Block Changes to Restricted File
-        if: contains(steps.changes.outputs.changed_files, 'path/to/restricted_file')
-        run: |
-          echo "Error: Changes to path/to/restricted_file are not allowed."
-          exit 1
+    - name: Check out repository
+      uses: actions/checkout@v2
+  
+    - name: Get the list of changed files
+      id: changes
+      run: |
+        BASE_REF=${{ github.event.pull_request.base.sha }}
+        HEAD_REF=${{ github.event.pull_request.head.sha }}
+        echo "Base ref: $BASE_REF"
+        echo "Head ref: $HEAD_REF"
+        
+        # Get the list of changed files
+        CHANGED_FILES=$(git diff --name-only $BASE_REF $HEAD_REF)
+        echo "Changed files:"
+        echo "$CHANGED_FILES"
+        
+        # Use environment file to pass output
+        echo "changed_files=$CHANGED_FILES" >> $GITHUB_ENV
+  
+    - name: Block Changes to Restricted File
+      if: contains(env.changed_files, 'path/to/restricted_file')
+      run: |
+        echo "Error: Changes to path/to/restricted_file are not allowed."
+        exit 1
+  
+    - name: Debug Changed Files
+      run: |
+        echo "Changed files: ${{ env.changed_files }}"
