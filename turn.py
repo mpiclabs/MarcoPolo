@@ -19,11 +19,12 @@
 # through some combination of new and reused methods
 # 2) TurnFactory must be updated to return that subclass when given it's 2-letter code
 # 
-# A Turn object stores the CA name and node pair for which it is a turn-- these are ultimately 
+# A Turn object stores the CA name, endpoint, and node pair for which it is a turn-- these are ultimately 
 # included in the request.
 #
-# Coupling/Dependencies-- This module loads the config file directly. It also hardcodes the CA request format.
-#                         If either of these change format, this module will not work.
+# Coupling/Dependencies-- This module hardcodes the CA request format. If this changes format, 
+#                         this module will not work.
+
 import os
 import requests
 import datetime
@@ -36,6 +37,7 @@ import json
 from utils.node import Node, NodeResponseError, NodeRequestError
 from utils.loaders import load_config
 from utils.loggers import http_logger, error_logger, general_logger
+from utils.data_objects import TurnData
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -59,14 +61,44 @@ class TurnFactory:
             raise ValueError(f"Unknown certificate authority: {ca_name}")
 
 class Turn(ABC):
-    def __init__(self, ca_endpoint, node_a: Node, node_b: Node):
+    def __init__(self, ca_name, ca_endpoint, node_a: Node, node_b: Node):
         self.node_a = node_a
         self.node_b = node_b
         self.endpoint = ca_endpoint
+        self.ca_name = ca_name
 
     @abstractmethod
     def generate_request(self, token):
         pass
+
+    def execute(self):
+        result = TurnData(  ca = self.ca_name, 
+                            node_a_name = self.node_a.name,
+                            node_a_ip = self.node_a.ip,
+                            node_b_name = self.node_b.name,
+                            node_b_ip = self.node_b.ip,
+                            start_time = datetime.datetime.now())
+        
+        try:
+            result.token, result.marco_num_tries = self.say_marco()
+            result.marco_succeeded = True        
+        except Exception as e:
+            result.errors.append(f"Error in say_marco: {e}")
+            result.marco_succeeded = False
+            result.end_time = datetime.datetime.now()
+            return result
+        
+        try: 
+            result.polo_results_node_a, result.polo_results_node_b = self.listen_polo(result.token)
+            result.listen_polo_succeeded = True
+        except Exception as e:
+            result.errors.append(f"Error in listen_polo: {e}")
+            result.listen_polo_succeeded = False
+            result.end_time = datetime.datetime.now()
+            return result
+        
+        result.end_time = datetime.datetime.now()
+        return result
 
     # This function uses the token to identify VP requests associated with this Turn.
     # Specifically, it requests from each node the set of IP addresses that contacted it
@@ -81,45 +113,48 @@ class Turn(ABC):
                    and the second list contains IP addresses from node B.
         Raises:
             NodeRequestError: If there is an error making a request to either node.
-            NodeResponseError: If the response from either node does not contain the expected 'ip_addresses' attribute.
+            NodeResponseError: If there is an error parsing the response from either node.
         """
-        node_a_ips = []
-        node_b_ips = []
-        try:
-            response = requests.get(f"http://{self.node_a.ip}/getips?token={token}")
-            response.raise_for_status()
-            node_a_ips = response.json()['ip_addresses']
-        except requests.exceptions.RequestException as e:
-            raise NodeRequestError(f"Error making request to {self.node_a.name} ({self.node_a.ip}): {e}")
-        except KeyError as e:
-            raise NodeResponseError(f"Error: {self.node_a.name} ({self.node_a.ip}) has no attribute 'ip_addresses'", e)
+        results = []
+        for node in [self.node_a, self.node_b]:
+            try:
+                response = requests.get(f"http://{node.ip}/getips?token={token}")
+                response.raise_for_status()
+                results.append(response.json()['ip_addresses'])
+            except requests.exceptions.RequestException as e:
+                raise NodeRequestError(f"Error making request to {node.name} ({node.ip}): {e}")
+            except KeyError as e:
+                raise NodeResponseError(f"Error parsing response from {node.name} ({node.ip}):", e)
+        return tuple(results)
 
-        try:
-            response = requests.get(f"http://{self.node_b.ip}/getips?token={token}")
-            response.raise_for_status()
-            node_b_ips = response.json()['ip_addresses']
-        except requests.exceptions.RequestException as e:
-            raise NodeRequestError(f"Error making request to {self.node_b.name} ({self.node_b.ip}): {e}")
-        except KeyError as e:
-            raise NodeResponseError(f"Error: {self.node_b.name} ({self.node_b.ip}) has no attribute 'ip_addresses'", e)
-            
-
-        return node_a_ips, node_b_ips
-
-    # Get a successful request and returns the corresponding 
     def say_marco(self):
+        """
+        Attempts to perform a request up to a specified number of retries.
+
+        This method will attempt to perform the defined cert request up to 5 times. If the request is successful
+        (i.e., the response status code is 200), it returns True, the token, and the attempt number.
+        If all attempts fail, it raises an exception.
+
+        Returns:
+            tuple: A tuple containing:
+                - bool: True if the request was successful, otherwise False.
+                - str: The token received from the request.
+                - int: The number of attempts made.
+        """
         retries = 5
-        for attempt in range(retries):
+        response = None
+        for attempt_num in range(retries):
             response, token = self._single_request()
             if response.status_code == 200:
-                return token
-            elif attempt < retries - 1:
-                print(f"Attempt {attempt + 1} failed with status code {response.status_code}. Waiting 10 seconds and retrying...")
-                time.sleep(10)
+                return token, attempt_num
             else:
-                # log error
-                error_logger.info(f"{self.node_a.name},{self.node_b.name}:\tHTTP Error: Failed after {retries} attempts with final status code {response.status_code}")
-    
+                print(f"Attempt {attempt_num} failed with status code {response.status_code}. Waiting 10 seconds and retrying...")
+                time.sleep(10)
+        # log error
+        error_logger.info(f"{self.node_a.name},{self.node_b.name}:\tHTTP Error: Failed after {retries} attempts with final status code {response.status_code}")
+        raise Exception(f"say_marco failed after {retries} attempts, with status code {response.status_code}")
+
+
     def _single_request(self):
         # Create a random token to identify the cert-request
         # Note: ClourFlare requires a 21 character token, or it'll respond with a 400-- "Not enough entropy in token"
@@ -139,9 +174,8 @@ class Turn(ABC):
 
 
 class OMTurn(Turn):
-    def __init__(self, node_a: Node, node_b: Node, ca_endpoint: str):
-        super().__init__(node_a, node_b, ca_endpoint)
-        self.ca_name = "ggp"
+    def __init__(self, ca_endpoint: str, node_a: Node, node_b: Node):
+        super().__init__("om", ca_endpoint, node_a, node_b)
 
     def generate_request(self, token):
         return {
@@ -168,9 +202,9 @@ class OMTurn(Turn):
         }
 
 class GGFTurn(Turn):
-    def __init__(self, node_a: Node, node_b: Node, ca_endpoint: str):
-        super().__init__(node_a, node_b, ca_endpoint)
-        self.ca_name = "ggp"
+    def __init__(self, ca_endpoint: str, node_a: Node, node_b: Node):
+        super().__init__("ggp", ca_endpoint, node_a, node_b)
+
 
     def generate_request(self, token):
         return {
@@ -187,9 +221,8 @@ class GGFTurn(Turn):
         }
 
 class GGPTurn(Turn):
-    def __init__(self, node_a: Node, node_b: Node, ca_endpoint: str):
-        super().__init__(node_a, node_b, ca_endpoint)
-        self.ca_name = "ggp"
+    def __init__(self, ca_endpoint: str, node_a: Node, node_b: Node):
+        super().__init__("ggp", ca_endpoint, node_a, node_b)
 
     def generate_request(self, token):
         return {
@@ -206,9 +239,8 @@ class GGPTurn(Turn):
         }
 
 class CFTurn(Turn):
-    def __init__(self, node_a: Node, node_b: Node, ca_endpoint: str):
-        super().__init__(node_a, node_b, ca_endpoint)
-        self.ca_name = "cf"
+    def __init__(self, ca_endpoint: str, node_a: Node, node_b: Node):
+        super().__init__("cf", ca_endpoint, node_a, node_b)
 
     def generate_request(self, token):
         return {
@@ -230,9 +262,8 @@ class CFTurn(Turn):
 # It must trigger a certbot process, and requires custom hook scripts to manage the token used. 
 # Certbot uses a preflight request, so 
 class LETurn(Turn):
-    def __init__(self, node_a: Node, node_b: Node, ca_endpoint: str):
-        super().__init__(node_a, node_b, ca_endpoint)
-        self.ca_name = "le"
+    def __init__(self, ca_endpoint: str, node_a: Node, node_b: Node):
+        super().__init__("le", ca_endpoint, node_a, node_b)
 
     def generate_request():
         return
@@ -255,5 +286,5 @@ class LETurn(Turn):
             return file.read().strip()
 
 if __name__=="__main__":
-    turn = TurnFactory.create("ggp", Node("node_a", "1"), Node("node_b", "1"))
+    turn = TurnFactory.create("ggp", "endpoint", Node("node_a", "1"), Node("node_b", "2"))
     turn.generate_request("bleh")
