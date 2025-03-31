@@ -10,7 +10,7 @@ import threading
 import sys
 
 sys.path.append('../')
-import bgp_pathfinder.bgp_utils
+from .. import bgp_utils
 
 
 def parse_args():
@@ -28,7 +28,7 @@ def main(args):
 	masterConfig = json.load(open(args.config_dir + "/master.json"))
 
 
-	bgp_pathfinder.bgp_utils.make_announcements_from_path_txt_file(args.destinations, args.paths_file, masterConfig)	
+	bgp_utils.make_announcements_from_path_txt_file(args.destinations, args.paths_file, masterConfig)	
 
 		
 

@@ -35,7 +35,7 @@ Ensure you have Terraform downloaded onto your computer. Before running the code
       - In configure/config.json, set `nodes` to a list of server names mapped to their IP addresses. 
          - Note that the server names used are not required to match any external configuration-- they will simply be the names used to identify the servers throughout this attack. But for the sake of clarity, we recommend using their hostnames.
       - Create a directory bgp_pathfinder/keys/vultr, and in that create a file called vultr.pem. Place in it the SSH private key being used by your servers--they should all use the same one--followed by a newline. Set the permissons for that the file to 700.
-   - **To automatically provisioning servers**:
+   - **To automatically provision servers**:
       - If you want the code to create servers for you, do the following:
          - In terraform/variables.tf, insert your Vultr API key
          - In `config.json`, set 'regions' to a list of node names mapped to the Vultr regions you want them in

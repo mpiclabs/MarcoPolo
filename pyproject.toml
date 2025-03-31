@@ -1,0 +1,31 @@
+[project]
+name = "marcopolo"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Ari Brown",email = "yabrown@princeton.edu"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "requests (>=2.32.3,<3.0.0)",
+    "pydantic (>=2.11.0,<3.0.0)"
+]
+
+[tool.poetry]
+package-mode = false
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.15.0"
+pytest = "^8.3.5"
+types-requests = "^2.32.0.20250306"
+pydantic = "^2.11.0"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+check_untyped_defs = true
+warn_return_any = true
+warn_unused_configs = true

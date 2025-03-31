@@ -76,7 +76,11 @@ def apply_terraform_with_variable(machines_to_run):
             # Generate config.json file
             output = subprocess.check_output(["terraform", f"-chdir={script_dir}/terraform", "output", "-json"])
             output_dict = json.loads(output)
-            nodes = output_dict["node_ips"]["value"]
+            nodes_data = output_dict["node_ips"]["value"]
+
+            # Create a list of Node objects using the Pydantic model
+            nodes = [{name: name, ip: ip} for name, ip in nodes_data.items()]
+
             with open("configure/config.json", "r") as file:
                 config = json.load(file)
             config["nodes"] = nodes

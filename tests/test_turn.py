@@ -1,8 +1,12 @@
+import datetime
+from pydantic import IPvAnyAddress
 import pytest
 from unittest.mock import patch, MagicMock
-from turn import TurnFactory
+
+import requests
+from ..src.turn import TurnFactory
 from requests.exceptions import HTTPError
-from utils.node import Node, NodeRequestError, NodeResponseError
+from ..src.utils.node import Node, NodeRequestError, NodeResponseError
 # Throughout this file, there are a lot of things to be patched. This includes:
 #   The MPIC_API_KEY environment variable
 #   The requests.get() function for listen_polo()
@@ -12,19 +16,19 @@ from utils.node import Node, NodeRequestError, NodeResponseError
 
 # Fixtures for reusable test data
 @pytest.fixture
-def mock_nodes():
-    mock_node_a = Node(name="mock_node_a", ip="1.2.3.4")
+def mock_nodes() -> tuple[Node, Node]:
+    mock_node_a = Node(name="mock_node_a", ip=("1.2.3.4"))
     mock_node_b = Node(name="mock_node_b", ip="5.6.7.8")
     return mock_node_a, mock_node_b
 
 @pytest.fixture
-def mock_token():
+def mock_token()->str:
     return "mock_token"
 
 # Applies patch mocking the mpic api key env var
 @pytest.fixture
 def patch_mpic_api_key_env_var():
-    with patch("turn.os.environ", {"MPIC_API_KEY": "mock-api-key"}):
+    with patch("marcopolo.src.turn.os.environ", {"MPIC_API_KEY": "mock-api-key"}):
         yield
 
 @pytest.fixture
@@ -95,15 +99,14 @@ def generate_expected_request(ca_name, endpoint, mock_token, node_a, node_b):
             },
         },
     }
-    return base_requests.get(ca_name, None)
+    return base_requests.get(ca_name)
 
 #################### Test Request Generation for each CA ##a##################
 #   Patching required: load_config() and the MPIC_API_KEY environment variable
 #   Mocking required: Nodes, token
 
 
-@pytest.mark.parametrize("ca_name, endpoint", [
-    ("ggp", "http://mock-ggp-url.com"),
+@pytest.mark.parametrize("ca_name, endpoint", [    ("ggp", "http://mock-ggp-url.com"),
     ("ggf", "http://mock-ggf-url.com"),
     ("cf", "https://mock-cf-url.com"),
     ("om", "https://mock-om-url.com")
@@ -148,13 +151,14 @@ class TestSayMarco:
         
         with patch("requests.post", return_value=mock_response) as mock_post:
             turn = TurnFactory.create(ca_name, endpoint, node_a, node_b)
-            token, attempt_num = turn.say_marco()
- 
+            say_marco_data = turn.say_marco()
+
             # Ensure a token is generated
-            assert token is not None
-            assert len(token) == 21  # Length of the token
-            assert isinstance(token, str)
-            assert attempt_num == 0 
+            assert isinstance(say_marco_data.token, str)
+            assert len(say_marco_data.token) == 21  # Length of the token
+            assert say_marco_data.num_tries == 1  # Assuming first attempt is successful
+            assert say_marco_data.failed is False  # Ensure the request was successful
+            assert say_marco_data.error_message is None  # Ensure no error message is present
 
             # Verify the POST request is made
             mock_post.assert_called_once()
@@ -167,11 +171,16 @@ class TestSayMarco:
         node_a, node_b = mock_nodes
         mock_response = MagicMock()
         mock_response.status_code = 500
+        mock_response.raise_for_status.side_effect = HTTPError
         with patch("requests.post", return_value=mock_response) as mock_post:
             turn = TurnFactory.create(ca_name, endpoint, node_a, node_b)
             
-            with pytest.raises(Exception):  # Replace SomeExpectedException with the actual exception
-                turn.say_marco()
+            say_marco_data = turn.say_marco()
+            
+            assert say_marco_data.error_message is not None  # Ensure an error message is present
+            assert say_marco_data.num_tries == 5  # Ensure it retried the maximum number of times
+            assert say_marco_data.failed is True  # Ensure the request failed
+            
 
             # Verify the POST request was retried 5 times
             assert mock_post.call_count == 5
@@ -191,7 +200,7 @@ class TestTurnFactory:
         """
         Test that TurnFactory returns the correct subclass based on CA name.
         """
-        from turn import TurnFactory
+
         node_a, node_b = mock_nodes
         turn = TurnFactory.create(ca_name, endpoint, node_a, node_b)
 
@@ -203,7 +212,6 @@ class TestTurnFactory:
         """
         Test TurnFactory raises an error for unknown CA names.
         """
-        from turn import TurnFactory
         node_a, node_b = mock_nodes
 
         with pytest.raises(ValueError, match="Unknown certificate authority: unknown"):
@@ -253,19 +261,18 @@ class TestListenPolo:
         mock_response_a = MagicMock()
         mock_response_a.status_code = 500
         mock_response_a.raise_for_status.side_effect = HTTPError
+        
+        for side_effect in [None, ConnectionError, requests.Timeout]:
+            mock_response_a.side_effect = side_effect
+            with patch("requests.get", side_effect=[mock_response_a] ) as mock_get:
+                turn = TurnFactory.create(ca_name, endpoint, node_a, node_b)
 
-        mock_response_b = MagicMock()
-        mock_response_b.status_code = 200
-        mock_response_b.json.return_value = {"ip_addresses": ["3.3.3.3"]}
+                # Assert exception is raised for the first node
+                with pytest.raises(NodeRequestError) as excinfo:
+                    turn.listen_polo(mock_token)
 
-        with patch("requests.get", side_effect=[mock_response_a]) as mock_get:
-            turn = TurnFactory.create(ca_name, endpoint, node_a, node_b)
-
-            # Assert exception is raised for the first node
-            with pytest.raises(NodeRequestError) as excinfo:
-                turn.listen_polo(mock_token)
-
-            assert mock_get.call_count == 1
+                assert mock_get.call_count == 1
+        
 
     @staticmethod
     def test_listen_polo_failure_node_b_request_error(patch_mpic_api_key_env_var, mock_nodes, mock_token, ca_name, endpoint):
@@ -281,15 +288,16 @@ class TestListenPolo:
         mock_response_b.status_code = 500
         mock_response_b.raise_for_status.side_effect = HTTPError
 
-        # 'side_effect' allows us to return different values for each call
-        with patch("requests.get", side_effect=[mock_response_a, mock_response_b]) as mock_get:
-            turn = TurnFactory.create(ca_name, endpoint, node_a, node_b)
+        for error in [None, ConnectionError, requests.Timeout]:
+            mock_response_b.side_effect = error
+            with patch("requests.get", side_effect=[mock_response_a, mock_response_b]) as mock_get:
+                turn = TurnFactory.create(ca_name, endpoint, node_a, node_b)
 
-            # Assert exception is raised for the second node
-            with pytest.raises(NodeRequestError) as excinfo:
-                turn.listen_polo(mock_token)
+                # Assert exception is raised for the first node
+                with pytest.raises(NodeRequestError) as excinfo:
+                    turn.listen_polo(mock_token)
 
-            assert mock_get.call_count == 2
+                assert mock_get.call_count == 2
  
     @staticmethod
     def test_listen_polo_failure_node_a_key_error(patch_mpic_api_key_env_var, mock_nodes, mock_token, ca_name, endpoint):
@@ -333,6 +341,47 @@ class TestListenPolo:
 
             assert mock_get.call_count == 2
 
-###############################################
+##################### Test Execute #########################
+
+@pytest.mark.parametrize("ca_name, endpoint", [
+    ("ggp", "http://mock-ggp-url.com"),
+    ("ggf", "http://mock-ggf-url.com"),
+    ("cf", "https://mock-cf-url.com"),
+    ("om", "https://mock-om-url.com")
+])
+class TestExecute:
+
+    @staticmethod
+    def test_execute_failure_say_marco(patch_mpic_api_key_env_var, mock_nodes, mock_token, ca_name, endpoint):
+        node_a, node_b = mock_nodes
+
+        # Create a mock failed SayMarcoData object
+        failed_say_marco_data = MagicMock()
+        failed_say_marco_data.token = None
+        failed_say_marco_data.num_tries = 5
+        failed_say_marco_data.failed = True
+        failed_say_marco_data.error_message = "Mocked failure"
+
+        with patch("marcopolo.src.turn.Turn.say_marco", return_value=failed_say_marco_data) as mock_say_marco:
+            from ..src.turn import TurnFactory
+            turn = TurnFactory.create(ca_name, endpoint, node_a, node_b)
+            result = turn.execute()
+            assert result.ca_name == ca_name
+            assert result.ca_endpoint == endpoint
+            assert result.node_a_name == node_a.name
+            assert result.node_a_ip == node_a.ip
+            assert result.node_b_name == node_b.name
+            assert result.node_b_ip == node_b.ip
+            assert isinstance(result.start_time, datetime.datetime)
+            assert isinstance(result.end_time, datetime.datetime)
+            assert result.say_marco_succeeded is False
+            assert result.listen_polo_succeeded is None
+            assert result.polo_results_node_a is None
+            assert result.polo_results_node_b is None
+            assert result.error == "Mocked failure"
+        
+
+
+        
 
 

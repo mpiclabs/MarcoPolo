@@ -52,11 +52,6 @@ def run_cmd_at_node_name(node, cmd):
 	nodeConfig = load_node_config(node)
 	return run_cmd_at_node(nodeConfig, cmd)
 
-def run_cmd_at_node_name(node, cmd):
-	print(f"[{get_current_human_time()}] Running CMD \"{cmd}\" at node {node}")
-	nodeConfig = load_node_config(node)
-	return run_cmd_at_node(nodeConfig, cmd)
-
 
 
 

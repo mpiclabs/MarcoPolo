@@ -3,7 +3,7 @@
     {
       "type": "aws-sam",
       "request": "direct-invoke",
-      "name": "real-world-mpdv-testing:bgp-hijack.cert_request_and_log (python3.7)",
+      "name": "marcopolo:bgp-hijack.cert_request_and_log (python3.7)",
       "invokeTarget": {
         "target": "code",
         "projectRoot": "${workspaceFolder}/",
