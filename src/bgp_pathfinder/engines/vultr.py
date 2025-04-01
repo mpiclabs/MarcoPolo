@@ -96,8 +96,8 @@ def make_announcement(node, announcementList):
 
 	announcementList = [announcement for announcement in announcementList if announcement[0] is not None]
 	for prefix, communities, asPathPoisons in announcementList:
-		if len(asPathPoisons) > 0:
-			raise IOError(f"Vultr does not support AS-path poisons. Problem announcement: {(prefix, communities, asPathPoisons)}")
+		#if len(asPathPoisons) > 0:
+		#	raise IOError(f"Vultr does not support AS-path poisons. Problem announcement: {(prefix, communities, asPathPoisons)}")
 		
 		if ":" in prefix:
 			# IPv6 prefix case
@@ -106,6 +106,8 @@ def make_announcement(node, announcementList):
 			for community in communities:
 				birdCommunity = community.replace(":", ",")
 				filters += f"bgp_community.add(({birdCommunity}));\n"
+			for poison in asPathPoisons:
+				filters += f"bgp_path.prepend({poison});\n"
 			filters += f"accept;\n"
 			filters += "}\n"
 		else:
@@ -115,6 +117,8 @@ def make_announcement(node, announcementList):
 			for community in communities:
 				birdCommunity = community.replace(":", ",")
 				filters4 += f"bgp_community.add(({birdCommunity}));\n"
+			for poison in asPathPoisons:
+				filters4 += f"bgp_path.prepend({poison});\n"
 			filters4 += f"accept;\n"
 			filters4 += "}\n"
 	

@@ -10,7 +10,7 @@ import importlib
 import time
 import datetime
 import threading
-from . import bgp_utils
+import bgp_utils
 
 def get_current_human_time():
 	value = datetime.datetime.fromtimestamp(time.time())
@@ -34,7 +34,7 @@ def parse_args(raw_args):
 	parser.add_argument("-d", "--destinations", nargs='+', default=None)
 	parser.add_argument("-i", "--ip_prefixes", nargs='+', default=[])
 	parser.add_argument("-o", "--communities", nargs='+', default=[])
-
+	parser.add_argument("-P", "--poisons", nargs='+', default=[])
 	parser.add_argument("-s", "--setup_from_announcement_statement", default=None)
 	
 	return parser.parse_args(raw_args)
@@ -224,7 +224,8 @@ def main(raw_args=None):
 		# We are in single announcement mode.
 		prefixes = args.ip_prefixes
 		communities = args.communities #[c.replace(",", ":") for c in args.communities]
-		announcementObject = [(prefix, communities, []) for prefix in prefixes]
+		poisons = args.poisons
+		announcementObject = [(prefix, communities, poisons) for prefix in prefixes]
 		threads = []
 		for node in args.destinations:
 			t = threading.Thread(target=lambda node, engine, announcementObject: engine.make_announcement(node, announcementObject), args=(node, engine, announcementObject))
