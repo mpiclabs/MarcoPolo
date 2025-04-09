@@ -39,12 +39,3 @@ http_handler.setLevel(logging.DEBUG)
 http_handler.setFormatter(log_format)
 http_logger.addHandler(http_handler)
 http_logger.addHandler(general_handler)  # HTTP logs also go to general.log
-
-def create_log_files_if_not_exist():
-    log_files = ['summary.log', 'general.log', 'errors.log', 'http.log']
-    for log_file in log_files:
-        log_file_path = os.path.join(paths.LOGS, log_file)
-        if not os.path.exists(log_file_path):
-            with open(log_file_path, 'w') as f:
-                f.write('')  # Create an empty file
-

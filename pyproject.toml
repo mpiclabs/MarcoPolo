@@ -36,7 +36,7 @@ destroy = "marcopolo.servers:destroy"
 config = "marcopolo.configure.config:run_config_script"
 announce = "marcopolo.bgp_pathfinder.pathfinder:main"
 withdraw = "marcopolo.bgp_pathfinder.pathfinder:withdraw"
-
+init_files = "marcopolo.utils.create_files:init_all_files"
 [tool.poetry]
 name = "marcopolo"
 version = "0.1.0"
