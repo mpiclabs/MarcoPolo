@@ -12,7 +12,7 @@ import argparse
 from marcopolo.paths import paths
 from marcopolo.attacks.round import Round
 from marcopolo.attacks.node import Node
-from marcopolo.utils.loggers import http_logger, summary_logger, error_logger
+from marcopolo.utils.loggers import create_log_files_if_not_exist, http_logger, summary_logger, error_logger
 from marcopolo.utils.loaders import load_config, load_state
 from marcopolo.utils.data_objects import CAResults, CertAuth, RoundData
 from marcopolo.utils.results_writer import initialize_result_files, reset_state, clear_log_files, record_results
@@ -39,6 +39,7 @@ def all_attacks(force_restart: bool = False, clear_logs: bool = False):
      reset_state()
   if clear_logs:
      clear_log_files()
+  create_log_files_if_not_exist()
   # Load info needed for game (loaders will raise error if anything's wrong, which should cause a quit)
   config = load_config()
   state = load_state()
