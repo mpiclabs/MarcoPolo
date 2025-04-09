@@ -40,4 +40,5 @@ withdraw = "marcopolo.bgp_pathfinder.pathfinder:withdraw"
 [tool.poetry]
 name = "marcopolo"
 version = "0.1.0"
+description = "marcopolo"
 packages = [{ include = "marcopolo", from = "src" }]
