@@ -22,10 +22,10 @@ def create_results_files_if_not_exist():
     if not os.path.exists(paths.RESULTS):
         os.makedirs(paths.RESULTS)
 
-        state_file_path = os.path.join(paths.RESULTS, 'state.json')
-        if not os.path.exists(state_file_path):
-            with open(state_file_path, 'w') as f:
-                json.dump({"mid_test": False, "curr_node_a": "", "curr_node_b": ""}, f)
+    state_file_path = os.path.join(paths.RESULTS, 'state.json')
+    if not os.path.exists(state_file_path):
+        with open(state_file_path, 'w') as f:
+            json.dump({"mid_test": False, "curr_node_a": "", "curr_node_b": ""}, f)
 
 # In src/marcopolo/utils/create_files.py
 def init_all_files():
