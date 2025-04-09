@@ -9,11 +9,9 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "requests (>=2.32.3,<3.0.0)",
-    "pydantic (>=2.11.0,<3.0.0)"
+    "pydantic (>=2.11.0,<3.0.0)",
+    "certbot (>=3.3.0,<4.0.0)"
 ]
-
-[tool.poetry]
-package-mode = false
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.15.0"
@@ -29,3 +27,17 @@ build-backend = "poetry.core.masonry.api"
 check_untyped_defs = true
 warn_return_any = true
 warn_unused_configs = true
+follow_imports="normal"
+
+[tool.poetry.scripts]
+attacks = "marcopolo.attacks.all_attacks:main"
+provision = "marcopolo.servers:provision"
+destroy = "marcopolo.servers:destroy"
+config = "marcopolo.configure.config:run_config_script"
+announce = "marcopolo.bgp_pathfinder.pathfinder:main"
+withdraw = "marcopolo.bgp_pathfinder.pathfinder:withdraw"
+
+[tool.poetry]
+name = "marcopolo"
+version = "0.1.0"
+packages = [{ include = "marcopolo", from = "src" }]

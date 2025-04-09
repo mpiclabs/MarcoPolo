@@ -1,0 +1,309 @@
+2025-04-08 20:19:22,540:DEBUG:certbot._internal.main:certbot version: 3.3.0
+2025-04-08 20:19:22,540:DEBUG:certbot._internal.main:Location of certbot entry point: /Users/aribraun/Library/Caches/pypoetry/virtualenvs/marcopolo-jCUx0uEO-py3.13/bin/certbot
+2025-04-08 20:19:22,540:DEBUG:certbot._internal.main:Arguments: ['--manual', '--manual-auth-hook', '/Users/aribraun/Desktop/MarcoPolo/marcopolo/src/marcopolo/certbot_tools/authenticator.sh', '--manual-cleanup-hook', '/Users/aribraun/Desktop/MarcoPolo/marcopolo/src/marcopolo/certbot_tools/cleanup.sh', '--config-dir', '/Users/aribraun/Desktop/MarcoPolo/marcopolo/src/marcopolo/certbot_tools/config', '--work-dir', '/Users/aribraun/Desktop/MarcoPolo/marcopolo/src/marcopolo/certbot_tools/work', '--logs-dir', '/Users/aribraun/Desktop/MarcoPolo/marcopolo/src/marcopolo/certbot_tools/logs', '--dry-run', '-d', 'sajghfgfhsdfasdf.arins.pretend-crypto-wallet.com']
+2025-04-08 20:19:22,540:DEBUG:certbot._internal.main:Discovered plugins: PluginsRegistry(PluginEntryPoint#manual,PluginEntryPoint#null,PluginEntryPoint#standalone,PluginEntryPoint#webroot)
+2025-04-08 20:19:22,571:DEBUG:certbot._internal.log:Root logging level set at 30
+2025-04-08 20:19:22,571:DEBUG:certbot._internal.plugins.selection:Requested authenticator manual and installer None
+2025-04-08 20:19:22,571:DEBUG:certbot._internal.plugins.selection:Single candidate plugin: * manual
+Description: Manual configuration or run your own shell scripts
+Interfaces: Authenticator, Plugin
+Entry point: EntryPoint(name='manual', value='certbot._internal.plugins.manual:Authenticator', group='certbot.plugins')
+Initialized: <certbot._internal.plugins.manual.Authenticator object at 0x104835be0>
+Prep: True
+2025-04-08 20:19:22,572:DEBUG:certbot._internal.plugins.selection:Selected authenticator <certbot._internal.plugins.manual.Authenticator object at 0x104835be0> and installer None
+2025-04-08 20:19:22,572:INFO:certbot._internal.plugins.selection:Plugins selected: Authenticator manual, Installer None
+2025-04-08 20:19:22,648:DEBUG:certbot._internal.main:Picked account: <Account(RegistrationResource(body=Registration(key=None, contact=(), agreement=None, status=None, terms_of_service_agreed=None, only_return_existing=None, external_account_binding=None), uri='https://acme-staging-v02.api.letsencrypt.org/acme/acct/194249214', new_authzr_uri=None, terms_of_service=None), 538981867fe71725a7a270f2f956eb32, Meta(creation_dt=datetime.datetime(2025, 4, 8, 23, 57, 24, tzinfo=datetime.timezone.utc), creation_host='224.1.168.192.in-addr.arpa', register_to_eff=None))>
+2025-04-08 20:19:22,655:DEBUG:acme.client:Sending GET request to https://acme-staging-v02.api.letsencrypt.org/directory.
+2025-04-08 20:19:22,659:DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): acme-staging-v02.api.letsencrypt.org:443
+2025-04-08 20:19:23,010:DEBUG:urllib3.connectionpool:https://acme-staging-v02.api.letsencrypt.org:443 "GET /directory HTTP/1.1" 200 1116
+2025-04-08 20:19:23,011:DEBUG:acme.client:Received response:
+HTTP 200
+Server: nginx
+Date: Wed, 09 Apr 2025 00:19:23 GMT
+Content-Type: application/json
+Content-Length: 1116
+Connection: keep-alive
+Cache-Control: public, max-age=0, no-cache
+X-Frame-Options: DENY
+Strict-Transport-Security: max-age=604800
+
+{
+  "ADf4rZ9EJm4": "https://community.letsencrypt.org/t/adding-random-entries-to-the-directory/33417",
+  "keyChange": "https://acme-staging-v02.api.letsencrypt.org/acme/key-change",
+  "meta": {
+    "caaIdentities": [
+      "letsencrypt.org"
+    ],
+    "profiles": {
+      "classic": "https://letsencrypt.org/docs/profiles#classic",
+      "shortlived": "https://letsencrypt.org/docs/profiles#shortlived (not yet generally available)",
+      "tlsserver": "https://letsencrypt.org/docs/profiles#tlsserver (not yet generally available)"
+    },
+    "termsOfService": "https://letsencrypt.org/documents/LE-SA-v1.5-February-24-2025.pdf",
+    "website": "https://letsencrypt.org/docs/staging-environment/"
+  },
+  "newAccount": "https://acme-staging-v02.api.letsencrypt.org/acme/new-acct",
+  "newNonce": "https://acme-staging-v02.api.letsencrypt.org/acme/new-nonce",
+  "newOrder": "https://acme-staging-v02.api.letsencrypt.org/acme/new-order",
+  "renewalInfo": "https://acme-staging-v02.api.letsencrypt.org/draft-ietf-acme-ari-03/renewalInfo",
+  "revokeCert": "https://acme-staging-v02.api.letsencrypt.org/acme/revoke-cert"
+}
+2025-04-08 20:19:23,011:DEBUG:certbot._internal.display.obj:Notifying user: Simulating a certificate request for sajghfgfhsdfasdf.arins.pretend-crypto-wallet.com
+2025-04-08 20:19:23,019:DEBUG:acme.client:Requesting fresh nonce
+2025-04-08 20:19:23,019:DEBUG:acme.client:Sending HEAD request to https://acme-staging-v02.api.letsencrypt.org/acme/new-nonce.
+2025-04-08 20:19:23,103:DEBUG:urllib3.connectionpool:https://acme-staging-v02.api.letsencrypt.org:443 "HEAD /acme/new-nonce HTTP/1.1" 200 0
+2025-04-08 20:19:23,103:DEBUG:acme.client:Received response:
+HTTP 200
+Server: nginx
+Date: Wed, 09 Apr 2025 00:19:23 GMT
+Connection: keep-alive
+Cache-Control: public, max-age=0, no-cache
+Link: <https://acme-staging-v02.api.letsencrypt.org/directory>;rel="index"
+Replay-Nonce: pVt5Lvg2UCY89QQWLbTInKWeyhnwBiIDCzc1F8yDrCsnsCir-Mg
+X-Frame-Options: DENY
+Strict-Transport-Security: max-age=604800
+
+
+2025-04-08 20:19:23,103:DEBUG:acme.client:Storing nonce: pVt5Lvg2UCY89QQWLbTInKWeyhnwBiIDCzc1F8yDrCsnsCir-Mg
+2025-04-08 20:19:23,103:DEBUG:acme.client:JWS payload:
+b'{\n  "identifiers": [\n    {\n      "type": "dns",\n      "value": "sajghfgfhsdfasdf.arins.pretend-crypto-wallet.com"\n    }\n  ]\n}'
+2025-04-08 20:19:23,106:DEBUG:acme.client:Sending POST request to https://acme-staging-v02.api.letsencrypt.org/acme/new-order:
+{
+  "protected": "eyJhbGciOiAiUlMyNTYiLCAia2lkIjogImh0dHBzOi8vYWNtZS1zdGFnaW5nLXYwMi5hcGkubGV0c2VuY3J5cHQub3JnL2FjbWUvYWNjdC8xOTQyNDkyMTQiLCAibm9uY2UiOiAicFZ0NUx2ZzJVQ1k4OVFRV0xiVEluS1dleWhud0JpSURDemMxRjh5RHJDc25zQ2lyLU1nIiwgInVybCI6ICJodHRwczovL2FjbWUtc3RhZ2luZy12MDIuYXBpLmxldHNlbmNyeXB0Lm9yZy9hY21lL25ldy1vcmRlciJ9",
+  "signature": "R6DgLcpQTU_ocWi-Zdd5ylvwg77e7t5HbpxyApSnjp8vXsij6imYoG6XahB3gQToDfTO_x4mjf9ej-9zAwjvzcH6IEFFAkcHDMpkIlYkrKUbyhDLq9sVKgHJMeVOHUYKHHvXi8tMzEU7c2KODyjm39haXfpmn3Pg67Q7JjeRTxJSRLdH5o-UU-GgJUgQbCn705JN_572fWGtNBnlBz8612kvSBCI49IGu7hwql9fcJhjTORQhXrggrh9vJIpu2cNAPNaF_E1NTQxjCFNbdZVgTm3EdsK1egzc1sR2dsbUvDSArUM2Tcf0dOYSrQOl6Xrfq4gMRgUILeNLdZeGl2uxA",
+  "payload": "ewogICJpZGVudGlmaWVycyI6IFsKICAgIHsKICAgICAgInR5cGUiOiAiZG5zIiwKICAgICAgInZhbHVlIjogInNhamdoZmdmaHNkZmFzZGYuYXJpbnMucHJldGVuZC1jcnlwdG8td2FsbGV0LmNvbSIKICAgIH0KICBdCn0"
+}
+2025-04-08 20:19:23,234:DEBUG:urllib3.connectionpool:https://acme-staging-v02.api.letsencrypt.org:443 "POST /acme/new-order HTTP/1.1" 201 394
+2025-04-08 20:19:23,234:DEBUG:acme.client:Received response:
+HTTP 201
+Server: nginx
+Date: Wed, 09 Apr 2025 00:19:23 GMT
+Content-Type: application/json
+Content-Length: 394
+Connection: keep-alive
+Boulder-Requester: 194249214
+Cache-Control: public, max-age=0, no-cache
+Link: <https://acme-staging-v02.api.letsencrypt.org/directory>;rel="index"
+Location: https://acme-staging-v02.api.letsencrypt.org/acme/order/194249214/23753014604
+Replay-Nonce: uAjfWGuu5j6NADipxrtKbD_EHHsuUW7r25jadCHe8bR4aIJ6uLY
+X-Frame-Options: DENY
+Strict-Transport-Security: max-age=604800
+
+{
+  "status": "pending",
+  "expires": "2025-04-16T00:19:23Z",
+  "identifiers": [
+    {
+      "type": "dns",
+      "value": "sajghfgfhsdfasdf.arins.pretend-crypto-wallet.com"
+    }
+  ],
+  "authorizations": [
+    "https://acme-staging-v02.api.letsencrypt.org/acme/authz/194249214/16728898784"
+  ],
+  "finalize": "https://acme-staging-v02.api.letsencrypt.org/acme/finalize/194249214/23753014604"
+}
+2025-04-08 20:19:23,234:DEBUG:acme.client:Storing nonce: uAjfWGuu5j6NADipxrtKbD_EHHsuUW7r25jadCHe8bR4aIJ6uLY
+2025-04-08 20:19:23,234:DEBUG:acme.client:JWS payload:
+b''
+2025-04-08 20:19:23,235:DEBUG:acme.client:Sending POST request to https://acme-staging-v02.api.letsencrypt.org/acme/authz/194249214/16728898784:
+{
+  "protected": "eyJhbGciOiAiUlMyNTYiLCAia2lkIjogImh0dHBzOi8vYWNtZS1zdGFnaW5nLXYwMi5hcGkubGV0c2VuY3J5cHQub3JnL2FjbWUvYWNjdC8xOTQyNDkyMTQiLCAibm9uY2UiOiAidUFqZldHdXU1ajZOQURpcHhydEtiRF9FSEhzdVVXN3IyNWphZENIZThiUjRhSUo2dUxZIiwgInVybCI6ICJodHRwczovL2FjbWUtc3RhZ2luZy12MDIuYXBpLmxldHNlbmNyeXB0Lm9yZy9hY21lL2F1dGh6LzE5NDI0OTIxNC8xNjcyODg5ODc4NCJ9",
+  "signature": "ktGfg-SrCvNDiuozNP6opwo9x2NJ54UKqPiMKAXfUYeC9KxEupSLASZiBVCZCI22Jq26MugaOzpPZR2RFAoO_U6KgD0Yj3SPVPTJNZluwqDaz3e9bCIuD5rOa96jNkc6MWKnKkEwNidPeFUa9AMR2YUS5UHtEBTPIukW-WpfxU-ThGg7B11cp8FdGH2BDAE6p6CQYkmtVj6sl20MyHHOs5JoMQP_Ah4Bguvjabg-STBMuf_kifqSflLRfbCrlOVMsyW1N_wTwilnFcvQx5-HK7Sv-BMLzDB2OAWAWquyxHHjoFUh-bVJLab4MhLVwOQfadNgFLec3L6ORnVCTnZshw",
+  "payload": ""
+}
+2025-04-08 20:19:23,327:DEBUG:urllib3.connectionpool:https://acme-staging-v02.api.letsencrypt.org:443 "POST /acme/authz/194249214/16728898784 HTTP/1.1" 200 874
+2025-04-08 20:19:23,327:DEBUG:acme.client:Received response:
+HTTP 200
+Server: nginx
+Date: Wed, 09 Apr 2025 00:19:23 GMT
+Content-Type: application/json
+Content-Length: 874
+Connection: keep-alive
+Boulder-Requester: 194249214
+Cache-Control: public, max-age=0, no-cache
+Link: <https://acme-staging-v02.api.letsencrypt.org/directory>;rel="index"
+Replay-Nonce: pVt5Lvg2ZUW5MYWV--6k4GU7JYtej4WrT4Vgv8Ptr_lscJLmEVU
+X-Frame-Options: DENY
+Strict-Transport-Security: max-age=604800
+
+{
+  "identifier": {
+    "type": "dns",
+    "value": "sajghfgfhsdfasdf.arins.pretend-crypto-wallet.com"
+  },
+  "status": "pending",
+  "expires": "2025-04-16T00:19:23Z",
+  "challenges": [
+    {
+      "type": "dns-01",
+      "url": "https://acme-staging-v02.api.letsencrypt.org/acme/chall/194249214/16728898784/n9q5Aw",
+      "status": "pending",
+      "token": "8QCZZ37dXLFLOR2xYA9VKc8x_ml_XbdyJpLGzIFMIAM"
+    },
+    {
+      "type": "http-01",
+      "url": "https://acme-staging-v02.api.letsencrypt.org/acme/chall/194249214/16728898784/Jt8_gw",
+      "status": "pending",
+      "token": "8QCZZ37dXLFLOR2xYA9VKc8x_ml_XbdyJpLGzIFMIAM"
+    },
+    {
+      "type": "tls-alpn-01",
+      "url": "https://acme-staging-v02.api.letsencrypt.org/acme/chall/194249214/16728898784/Dgh0vw",
+      "status": "pending",
+      "token": "8QCZZ37dXLFLOR2xYA9VKc8x_ml_XbdyJpLGzIFMIAM"
+    }
+  ]
+}
+2025-04-08 20:19:23,327:DEBUG:acme.client:Storing nonce: pVt5Lvg2ZUW5MYWV--6k4GU7JYtej4WrT4Vgv8Ptr_lscJLmEVU
+2025-04-08 20:19:23,327:INFO:certbot._internal.auth_handler:Performing the following challenges:
+2025-04-08 20:19:23,327:INFO:certbot._internal.auth_handler:http-01 challenge for sajghfgfhsdfasdf.arins.pretend-crypto-wallet.com
+2025-04-08 20:19:23,327:INFO:certbot.compat.misc:Running manual-auth-hook command: /Users/aribraun/Desktop/MarcoPolo/marcopolo/src/marcopolo/certbot_tools/authenticator.sh
+2025-04-08 20:19:23,349:DEBUG:certbot._internal.display.obj:Notifying user: Hook '--manual-auth-hook' for sajghfgfhsdfasdf.arins.pretend-crypto-wallet.com ran with output:
+ running auth script
+ created webroot at /Users/aribraun/Desktop/MarcoPolo/marcopolo/src/marcopolo/certbot_tools/webroot/.well-known/acme-challenge
+ wrote validation string 8QCZZ37dXLFLOR2xYA9VKc8x_ml_XbdyJpLGzIFMIAM.FqlgdLhFizQ184nzmBeC--ihd5PJuXAl8URhyfbxTCY to /Users/aribraun/Desktop/MarcoPolo/marcopolo/src/marcopolo/certbot_tools/webroot/.well-known/acme-challenge/8QCZZ37dXLFLOR2xYA9VKc8x_ml_XbdyJpLGzIFMIAM
+ wrote token 8QCZZ37dXLFLOR2xYA9VKc8x_ml_XbdyJpLGzIFMIAM to /Users/aribraun/Desktop/MarcoPolo/marcopolo/src/marcopolo/certbot_tools/token
+2025-04-08 20:19:23,350:DEBUG:acme.client:JWS payload:
+b'{}'
+2025-04-08 20:19:23,351:DEBUG:acme.client:Sending POST request to https://acme-staging-v02.api.letsencrypt.org/acme/chall/194249214/16728898784/Jt8_gw:
+{
+  "protected": "eyJhbGciOiAiUlMyNTYiLCAia2lkIjogImh0dHBzOi8vYWNtZS1zdGFnaW5nLXYwMi5hcGkubGV0c2VuY3J5cHQub3JnL2FjbWUvYWNjdC8xOTQyNDkyMTQiLCAibm9uY2UiOiAicFZ0NUx2ZzJaVVc1TVlXVi0tNms0R1U3Sll0ZWo0V3JUNFZndjhQdHJfbHNjSkxtRVZVIiwgInVybCI6ICJodHRwczovL2FjbWUtc3RhZ2luZy12MDIuYXBpLmxldHNlbmNyeXB0Lm9yZy9hY21lL2NoYWxsLzE5NDI0OTIxNC8xNjcyODg5ODc4NC9KdDhfZ3cifQ",
+  "signature": "Sihjwlk6wFM109jY8hCmR2JLt85gs_Vew3zpdr7-sq85yrym9oE60bNvENAAHGr8W6hg-72CYvtxlE9UYneyCz6A3FS7saV0knqe0bp2VTEp3VgDBzEwQQgo7C-tLRNTR2IJUI3b9-1AP6309vHr7lOjFwNwuHZRiuLQ0fby3G9J3zynfEq0xzwQ5sC8X9NiCP01fJFh8aaAt8XWbNnBTKwm0dhxUl5JWOZnZwCmMoCgbnkyUKLz1r8IU2D48okqZorNrHBlvIBJu1qDdgmuhX9WfC6Pl0MSOonh_W0t2L48aNXP3loLbOZEqPSAqI7RWzO1nMQciLDuYv-B74gysw",
+  "payload": "e30"
+}
+2025-04-08 20:19:24,134:DEBUG:urllib3.connectionpool:https://acme-staging-v02.api.letsencrypt.org:443 "POST /acme/chall/194249214/16728898784/Jt8_gw HTTP/1.1" 200 201
+2025-04-08 20:19:24,134:DEBUG:acme.client:Received response:
+HTTP 200
+Server: nginx
+Date: Wed, 09 Apr 2025 00:19:24 GMT
+Content-Type: application/json
+Content-Length: 201
+Connection: keep-alive
+Boulder-Requester: 194249214
+Cache-Control: public, max-age=0, no-cache
+Link: <https://acme-staging-v02.api.letsencrypt.org/directory>;rel="index", <https://acme-staging-v02.api.letsencrypt.org/acme/authz/194249214/16728898784>;rel="up"
+Location: https://acme-staging-v02.api.letsencrypt.org/acme/chall/194249214/16728898784/Jt8_gw
+Replay-Nonce: uAjfWGuuijqVsHiaZn2gnlyw8eDCpQ7G6bC_oXaESUF-5kbKEWE
+X-Frame-Options: DENY
+Strict-Transport-Security: max-age=604800
+
+{
+  "type": "http-01",
+  "url": "https://acme-staging-v02.api.letsencrypt.org/acme/chall/194249214/16728898784/Jt8_gw",
+  "status": "pending",
+  "token": "8QCZZ37dXLFLOR2xYA9VKc8x_ml_XbdyJpLGzIFMIAM"
+}
+2025-04-08 20:19:24,134:DEBUG:acme.client:Storing nonce: uAjfWGuuijqVsHiaZn2gnlyw8eDCpQ7G6bC_oXaESUF-5kbKEWE
+2025-04-08 20:19:24,134:INFO:certbot._internal.auth_handler:Waiting for verification...
+2025-04-08 20:19:25,135:DEBUG:acme.client:JWS payload:
+b''
+2025-04-08 20:19:25,136:DEBUG:acme.client:Sending POST request to https://acme-staging-v02.api.letsencrypt.org/acme/authz/194249214/16728898784:
+{
+  "protected": "eyJhbGciOiAiUlMyNTYiLCAia2lkIjogImh0dHBzOi8vYWNtZS1zdGFnaW5nLXYwMi5hcGkubGV0c2VuY3J5cHQub3JnL2FjbWUvYWNjdC8xOTQyNDkyMTQiLCAibm9uY2UiOiAidUFqZldHdXVpanFWc0hpYVpuMmdubHl3OGVEQ3BRN0c2YkNfb1hhRVNVRi01a2JLRVdFIiwgInVybCI6ICJodHRwczovL2FjbWUtc3RhZ2luZy12MDIuYXBpLmxldHNlbmNyeXB0Lm9yZy9hY21lL2F1dGh6LzE5NDI0OTIxNC8xNjcyODg5ODc4NCJ9",
+  "signature": "uFP8wX2ygZknsBJUeHfQdXL3apEOqtVc88MocQEfo5YzDewqos6t964CTj9-iXM_dduduFlVx6m2Dox-LwZ7zjEGeUg8MzXzLxO285De48NBCAwoFEW-zwrFIX4dJ1kKUXbI8KYKfZDCWXlFtqT0O3YQ-mF_EGMjjY8T95X__nokvSEEsSPRm4mepxD19FxkUxuxfeZZg850cnZXEefwBvgCIbWjhBbV9GOR5s1yBoEm2GVuT2JeZ6fNI4dROaXgfFzkxmoJQlzCFw_KF0Cb3UcjprTuoquWioTHEKIaI5Nr8EYj5J9wQ2WZlHgQNKwV65TJAHIPQIZu-f2_W7R7BA",
+  "payload": ""
+}
+2025-04-08 20:19:25,242:DEBUG:urllib3.connectionpool:https://acme-staging-v02.api.letsencrypt.org:443 "POST /acme/authz/194249214/16728898784 HTTP/1.1" 200 1355
+2025-04-08 20:19:25,242:DEBUG:acme.client:Received response:
+HTTP 200
+Server: nginx
+Date: Wed, 09 Apr 2025 00:19:25 GMT
+Content-Type: application/json
+Content-Length: 1355
+Connection: keep-alive
+Boulder-Requester: 194249214
+Cache-Control: public, max-age=0, no-cache
+Link: <https://acme-staging-v02.api.letsencrypt.org/directory>;rel="index"
+Replay-Nonce: uAjfWGuup5sUHbg13LEPjzK4y7txHKLGlfR9IS_0WrjywIZuHbU
+X-Frame-Options: DENY
+Strict-Transport-Security: max-age=604800
+
+{
+  "identifier": {
+    "type": "dns",
+    "value": "sajghfgfhsdfasdf.arins.pretend-crypto-wallet.com"
+  },
+  "status": "invalid",
+  "expires": "2025-04-16T00:19:23Z",
+  "challenges": [
+    {
+      "type": "http-01",
+      "url": "https://acme-staging-v02.api.letsencrypt.org/acme/chall/194249214/16728898784/Jt8_gw",
+      "status": "invalid",
+      "validated": "2025-04-09T00:19:24Z",
+      "error": {
+        "type": "urn:ietf:params:acme:error:unauthorized",
+        "detail": "66.180.191.1: Invalid response from http://sajghfgfhsdfasdf.arins.pretend-crypto-wallet.com/.well-known/acme-challenge/8QCZZ37dXLFLOR2xYA9VKc8x_ml_XbdyJpLGzIFMIAM: \"\u003c!DOCTYPE HTML PUBLIC \\\"-//W3C//DTD HTML 4.01//EN\\\"\\n        \\\"http://www.w3.org/TR/html4/strict.dtd\\\"\u003e\\n\u003chtml\u003e\\n    \u003chead\u003e\\n        \u003cme\"",
+        "status": 403
+      },
+      "token": "8QCZZ37dXLFLOR2xYA9VKc8x_ml_XbdyJpLGzIFMIAM",
+      "validationRecord": [
+        {
+          "url": "http://sajghfgfhsdfasdf.arins.pretend-crypto-wallet.com/.well-known/acme-challenge/8QCZZ37dXLFLOR2xYA9VKc8x_ml_XbdyJpLGzIFMIAM",
+          "hostname": "sajghfgfhsdfasdf.arins.pretend-crypto-wallet.com",
+          "port": "80",
+          "addressesResolved": [
+            "66.180.191.1"
+          ],
+          "addressUsed": "66.180.191.1"
+        }
+      ]
+    }
+  ]
+}
+2025-04-08 20:19:25,242:DEBUG:acme.client:Storing nonce: uAjfWGuup5sUHbg13LEPjzK4y7txHKLGlfR9IS_0WrjywIZuHbU
+2025-04-08 20:19:25,242:INFO:certbot._internal.auth_handler:Challenge failed for domain sajghfgfhsdfasdf.arins.pretend-crypto-wallet.com
+2025-04-08 20:19:25,242:INFO:certbot._internal.auth_handler:http-01 challenge for sajghfgfhsdfasdf.arins.pretend-crypto-wallet.com
+2025-04-08 20:19:25,242:DEBUG:certbot._internal.display.obj:Notifying user: 
+Certbot failed to authenticate some domains (authenticator: manual). The Certificate Authority reported these problems:
+  Domain: sajghfgfhsdfasdf.arins.pretend-crypto-wallet.com
+  Type:   unauthorized
+  Detail: 66.180.191.1: Invalid response from http://sajghfgfhsdfasdf.arins.pretend-crypto-wallet.com/.well-known/acme-challenge/8QCZZ37dXLFLOR2xYA9VKc8x_ml_XbdyJpLGzIFMIAM: "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\"\n        \"http://www.w3.org/TR/html4/strict.dtd\">\n<html>\n    <head>\n        <me"
+
+Hint: The Certificate Authority failed to verify the challenge files created by the --manual-auth-hook. Ensure that this hook is functioning correctly. Refer to "certbot --help manual" and the Certbot User Guide.
+
+2025-04-08 20:19:25,244:DEBUG:certbot._internal.error_handler:Encountered exception:
+Traceback (most recent call last):
+  File "/Users/aribraun/Library/Caches/pypoetry/virtualenvs/marcopolo-jCUx0uEO-py3.13/lib/python3.13/site-packages/certbot/_internal/auth_handler.py", line 108, in handle_authorizations
+    self._poll_authorizations(authzrs, max_retries, max_time_mins, best_effort)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/aribraun/Library/Caches/pypoetry/virtualenvs/marcopolo-jCUx0uEO-py3.13/lib/python3.13/site-packages/certbot/_internal/auth_handler.py", line 212, in _poll_authorizations
+    raise errors.AuthorizationError('Some challenges have failed.')
+certbot.errors.AuthorizationError: Some challenges have failed.
+
+2025-04-08 20:19:25,244:DEBUG:certbot._internal.error_handler:Calling registered functions
+2025-04-08 20:19:25,244:INFO:certbot._internal.auth_handler:Cleaning up challenges
+2025-04-08 20:19:25,244:INFO:certbot.compat.misc:Running manual-cleanup-hook command: /Users/aribraun/Desktop/MarcoPolo/marcopolo/src/marcopolo/certbot_tools/cleanup.sh
+2025-04-08 20:19:25,251:DEBUG:certbot._internal.display.obj:Notifying user: Hook '--manual-cleanup-hook' for sajghfgfhsdfasdf.arins.pretend-crypto-wallet.com ran with output:
+ about to run cleanup
+ ran cleanup
+2025-04-08 20:19:25,252:DEBUG:certbot._internal.log:Exiting abnormally:
+Traceback (most recent call last):
+  File "/Users/aribraun/Library/Caches/pypoetry/virtualenvs/marcopolo-jCUx0uEO-py3.13/bin/certbot", line 8, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/Users/aribraun/Library/Caches/pypoetry/virtualenvs/marcopolo-jCUx0uEO-py3.13/lib/python3.13/site-packages/certbot/main.py", line 19, in main
+    return internal_main.main(cli_args)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/Users/aribraun/Library/Caches/pypoetry/virtualenvs/marcopolo-jCUx0uEO-py3.13/lib/python3.13/site-packages/certbot/_internal/main.py", line 1871, in main
+    return config.func(config, plugins)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/aribraun/Library/Caches/pypoetry/virtualenvs/marcopolo-jCUx0uEO-py3.13/lib/python3.13/site-packages/certbot/_internal/main.py", line 1577, in certonly
+    lineage = _get_and_save_cert(le_client, config, domains, certname, lineage)
+  File "/Users/aribraun/Library/Caches/pypoetry/virtualenvs/marcopolo-jCUx0uEO-py3.13/lib/python3.13/site-packages/certbot/_internal/main.py", line 142, in _get_and_save_cert
+    lineage = le_client.obtain_and_enroll_certificate(domains, certname)
+  File "/Users/aribraun/Library/Caches/pypoetry/virtualenvs/marcopolo-jCUx0uEO-py3.13/lib/python3.13/site-packages/certbot/_internal/client.py", line 513, in obtain_and_enroll_certificate
+    cert, chain, key, _ = self.obtain_certificate(domains)
+                          ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/aribraun/Library/Caches/pypoetry/virtualenvs/marcopolo-jCUx0uEO-py3.13/lib/python3.13/site-packages/certbot/_internal/client.py", line 423, in obtain_certificate
+    orderr = self._get_order_and_authorizations(csr.data, self.config.allow_subset_of_names)
+  File "/Users/aribraun/Library/Caches/pypoetry/virtualenvs/marcopolo-jCUx0uEO-py3.13/lib/python3.13/site-packages/certbot/_internal/client.py", line 492, in _get_order_and_authorizations
+    authzr = self.auth_handler.handle_authorizations(orderr, self.config, best_effort)
+  File "/Users/aribraun/Library/Caches/pypoetry/virtualenvs/marcopolo-jCUx0uEO-py3.13/lib/python3.13/site-packages/certbot/_internal/auth_handler.py", line 108, in handle_authorizations
+    self._poll_authorizations(authzrs, max_retries, max_time_mins, best_effort)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/aribraun/Library/Caches/pypoetry/virtualenvs/marcopolo-jCUx0uEO-py3.13/lib/python3.13/site-packages/certbot/_internal/auth_handler.py", line 212, in _poll_authorizations
+    raise errors.AuthorizationError('Some challenges have failed.')
+certbot.errors.AuthorizationError: Some challenges have failed.
+2025-04-08 20:19:25,255:ERROR:certbot._internal.log:Some challenges have failed.

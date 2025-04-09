@@ -12,7 +12,7 @@ This codebase tests the resilience of a Certificate Authority (CA) implementatio
 If you plan on modifying and pushing any code, run the following commands before doing so:
 ```bash
 git update-index --skip-worktree terraform/variables.tf
-git update-index --skip-worktree results/*.log
+git update-index --skip-worktree logs/*.log
 git update-index --skip-worktree results/*.json
 ```
 This ensures that no sensitive or instance-specific files are pushed to the remote repository, which is visible to others.
@@ -83,3 +83,21 @@ include openMpic key as env var if you'll be testing that
 
 some things that have been missing:
 opemmpic key in envvar, vultr key and ssh id in variables.tf, ssh key in vultr.pem or wasn't configured to 700, 
+
+Troubleshooting:
+cert req times out-- probably because the server for the domain isn't actually running, so perspectives don't get any response.
+1) ensure the domain ip is responsive-- ping it.
+2) ensure the domain ip block was properly announced-- check on looking glass.
+3) check that bird is properly connecting to BGP session with vultr-- on the server attempting to announce the block, run 
+```bash
+birdc show protocols all
+```
+You should get 
+you can verify that the server is running by going to the vultr server and checking the docker container-- which you can enter with 'docker exec -it [container name] /bin/bash'
+
+Troubleshooting:
+
+
+debug log: 
+cert req times out-- the BGP announcement wasn't actually happening because BIRD wasn't connected to vultr's BGP server. Had to restart bird. Never really figured out what happened, I assume it was docker interfering with it.
+LE requests weren't passing-- I forgot that the nodes were coded to forward requests to a hardcoded ip address (the central server), so they were never getting to my local machine. more generally, you need to make sure that the web root folder is being served, so that requests (which will come in the form '/.well-known/acme-challenge/{TOKEN}') actually return the token and pass the challenge. Btw, it's only called web root because it's the root document being served-- all paths are resolved relative to it. you can call it anything, as long as it has the necessary file system within it (namely .well-known/acme-challenge). 

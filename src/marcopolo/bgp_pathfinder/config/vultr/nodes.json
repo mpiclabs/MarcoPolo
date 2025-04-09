@@ -1,0 +1,14 @@
+{
+  "__default": {
+    "key": "vultr.pem",
+    "user": "root",
+    "template": "bird6-default.conf",
+    "template4": "bird-default.conf"
+  },
+  "name": "ip",
+  "ariamsterdam": "45.32.233.8",
+  "arihonolulu": "208.83.239.75",
+  "arinewark": "207.148.28.68",
+  "ariatlanta": "155.138.193.253",
+  "arinewyorktest": "66.42.86.12"
+}

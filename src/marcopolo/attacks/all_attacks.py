@@ -1,0 +1,92 @@
+#!/usr/bin/env python3
+
+import os
+import json
+import time
+import signal
+import threading
+import sys
+import traceback
+import argparse
+
+from marcopolo.paths import paths
+from marcopolo.attacks.round import Round
+from marcopolo.attacks.node import Node
+from marcopolo.utils.loggers import http_logger, summary_logger, error_logger
+from marcopolo.utils.loaders import load_config, load_state
+from marcopolo.utils.data_objects import CAResults, CertAuth, RoundData
+from marcopolo.utils.results_writer import initialize_result_files, reset_state, clear_log_files, record_results
+
+
+def all_attacks(force_restart: bool = False, clear_logs: bool = False):
+  """
+  Executes a series of attacks between pairs of nodes using different certificate authorities.
+
+  This function orchestrates the entire attack sequence by:
+  1. Loading the necessary configuration and state information.
+  2. Initializing result files if this is a new run.
+  3. Iterating through all pairs of nodes to execute the attack.
+  4. Recording the results of each attack in the specified format.
+
+  Parameters:
+  - force_restart (bool): If True, the test will restart from the beginning, ignoring the current state.
+  - clear_logs (bool): If True, all log files will be cleared before starting the attacks.
+
+  Returns:
+  None
+  """
+  if force_restart:
+     reset_state()
+  if clear_logs:
+     clear_log_files()
+  # Load info needed for game (loaders will raise error if anything's wrong, which should cause a quit)
+  config = load_config()
+  state = load_state()
+  ca_list = config.certificate_authorities
+  nodes = config.nodes
+  # if this is a new run, reinitialize result files
+  if not state.mid_test: 
+     initialize_result_files(ca_list, nodes)
+
+  # find starting indices
+  def find_index_by_name(name: str) -> int:
+      return next(i for i, node in enumerate(nodes) if node.name == name)
+
+  a_start_index = find_index_by_name(state.curr_node_a) if state.mid_test else 0
+  b_start_index = find_index_by_name(state.curr_node_b) if state.mid_test else a_start_index + 1
+
+  for i, node_a in enumerate(nodes[a_start_index:], start=a_start_index):
+    for node_b in nodes[b_start_index if i==a_start_index else i+1:]:
+      # update state file to current attack pair
+      with open(f'{paths.RESULTS}/state.json', 'w') as file:
+        state.mid_test = True
+        state.curr_node_a = node_a.name
+        state.curr_node_b = node_b.name
+        json.dump(state.model_dump(), file)
+
+      #run attack and record results
+      round = Round(
+          cas=ca_list,
+          bgp_prefix="66.180.191.0/24",
+          node_a=node_a,
+          node_b=node_b
+      )
+      round_data = round.execute()
+      record_results(round_data)
+
+  reset_state()
+      
+def parse_arguments():
+    """Parse command line arguments for the Marco-Polo attacks."""
+    parser = argparse.ArgumentParser(description='Run Marco-Polo attacks')
+    parser.add_argument('--force-restart', action='store_true', help='Force restart the test from the beginning')
+    parser.add_argument('--clear-logs', action='store_true', help='Clear all log files before starting')
+    return parser.parse_args()
+
+def main():
+    # Basically only exists so we can call it from command line with arguments as a package (e.g. marcopolo.attacks.all_attacks.main --force-restart --clear-logs)
+    args = parse_arguments()
+    all_attacks(force_restart=args.force_restart, clear_logs=args.clear_logs)
+   
+if __name__=="__main__":
+    main()

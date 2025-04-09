@@ -2,6 +2,9 @@ import subprocess
 import json
 import os
 
+from marcopolo.paths import paths
+from marcopolo.utils.loaders import load_config
+
 def run_terraform_command(command):
     """
     Run a Terraform command with the given options.
@@ -79,12 +82,12 @@ def apply_terraform_with_variable(machines_to_run):
             nodes_data = output_dict["node_ips"]["value"]
 
             # Create a list of Node objects using the Pydantic model
-            nodes = [{name: name, ip: ip} for name, ip in nodes_data.items()]
+            nodes = [{"name": name, "ip": ip} for name, ip in nodes_data.items()]
 
-            with open("configure/config.json", "r") as file:
+            with open(f"{paths.CONFIG}/config.json", "r") as file:
                 config = json.load(file)
             config["nodes"] = nodes
-            with open("configure/config.json", "w") as file:
+            with open(f"{paths.CONFIG}/config.json", "w") as file:
                 json.dump(config, file, indent=4)
             print("Generated config.json file")
     else:
@@ -93,10 +96,15 @@ def apply_terraform_with_variable(machines_to_run):
 
 
 
-if __name__ == "__main__":
+def provision():
     # This creates all instances except Honolulu and Sao Paolo (they don't use the same plan as the rest, must be spun up separately)
     # because they use different plans
-    with open("configure/config.json", "r") as file:
-        config = json.load(file)
-        name_region_dict = config["vultr_regions"]
+    config = load_config()
+    name_region_dict = config.vultr_regions
     apply_terraform_with_variable(name_region_dict)
+
+def destroy():
+    run_terraform_command('destroy')
+
+if __name__ == "__main__":
+    provision()

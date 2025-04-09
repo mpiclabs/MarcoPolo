@@ -1,0 +1,8 @@
+{
+  "engine": "vultr",
+  "nodes": [
+    "ariamsterdam",
+    "ariatlanta",
+    "arinewark"
+  ]
+}

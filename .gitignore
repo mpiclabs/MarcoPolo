@@ -163,8 +163,8 @@ cython_debug/
 terraform/variables.tf
 
 #results stuff
-results/*.log
-results/state.json
+src/marcopolo/results/*.json
+src/marcopolo/results/state.json
 
 #terraform stuff
 terraform/
@@ -182,3 +182,6 @@ configure/config.json
 
 .DS_Store
 results/.DS_Store
+
+.vscode/*
+.vscode/

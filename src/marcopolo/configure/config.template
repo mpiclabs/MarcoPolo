@@ -1,0 +1,29 @@
+{
+    "nodes": [
+        {
+            "name": "example_node_1",
+            "ip": "0.0.0.0"
+        },
+        {
+            "name": "example_node_2",
+            "ip": "0.0.0.0"
+        }
+    ],
+    "vultr_regions": {
+        "example_node_3": "example_region_1",
+        "example_node_1": "example_region_2",
+        "example_node_2": "example_region_3"
+    },
+    "certificate_authorities": [
+        {
+            "name": "example_ca",
+            "endpoint": "example_endpoint",
+            "num_perspectives": "example_num"
+        },
+        {
+            "name": "example_ca",
+            "endpoint": "example_endpoint",
+            "num_perspectives": "example_num"
+        }
+    ]
+}
