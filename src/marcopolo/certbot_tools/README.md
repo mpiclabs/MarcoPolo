@@ -14,6 +14,9 @@ Certbot defaults to using:
 /var/log/letsencrypt (for --logs-dir)
 these are all system-level-directories, meaning certbot needs to be run from root. To avoid running wild with permissions, we manually provide local folders to write to instead.
 
+webroot-- this is where the validation tokens will be stored in '.well-known/acme-challenge' in order to pass validation. Webroot needs to be served for this to work.
+webroot_server.py-- functions to control the server serving webroot.
+
 IMPORTANT: For any of this to work, you need to be running a basic python server pointing to webroot. Why? Because each node forwards any acme requests to the central server (an ip that is hardcoded, which means as of now you can only run marcopolo with let's encrypt on that one server). This request will automatically go to port 80, which means not only does something need to listen on that port, but that something needs to have the challenge ready to be returned. We do that by spinning up a basic python server that points to webroot. That is the equivalent of what 
 ```bash
 certbot certonly --standalone

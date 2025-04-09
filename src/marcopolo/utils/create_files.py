@@ -27,7 +27,13 @@ def create_results_files_if_not_exist():
         with open(state_file_path, 'w') as f:
             json.dump({"mid_test": False, "curr_node_a": "", "curr_node_b": ""}, f)
 
+def create_webroot_dir_if_not_exist():
+    if not os.path.exists(paths.CERTBOT_TOOLS / "webroot" / ".well-known" / "acme-challenge"):
+        os.makedirs(paths.CERTBOT_TOOLS / "webroot" / ".well-known" / "acme-challenge")
+    
+
 # In src/marcopolo/utils/create_files.py
 def init_all_files():
     create_results_files_if_not_exist()
     create_log_files_if_not_exist()
+    create_webroot_dir_if_not_exist()

@@ -37,6 +37,10 @@ config = "marcopolo.configure.config:run_config_script"
 announce = "marcopolo.bgp_pathfinder.pathfinder:main"
 withdraw = "marcopolo.bgp_pathfinder.pathfinder:withdraw"
 init_files = "marcopolo.utils.create_files:init_all_files"
+start_webroot_server = "marcopolo.certbot_tools.webroot_server:start_webroot_server"
+stop_webroot_server = "marcopolo.certbot_tools.webroot_server:stop_webroot_server"
+
+
 [tool.poetry]
 name = "marcopolo"
 version = "0.1.0"
