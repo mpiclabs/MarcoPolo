@@ -75,9 +75,9 @@ Ensure you have Terraform downloaded onto your computer. Before running the code
 
 To run this on a new server:
 install snapd, install cerbot. take the server IP address and hardcode that into the test node flask app. 
-need authenticator.sh, cleanup.sh, webroot, certbot_server.log
+need authenticator.sh, cleanup.sh, webroot, webroot_server.log
 python server running as follows: 
-python3 -m http.server 80 --directory ~/certbot_tools/webroot > ~/certbot_tools/certbot_server.log 2>&1 &
+python3 -m http.server 80 --directory ~/certbot_tools/webroot > ~/certbot_tools/webroot_server.log 2>&1 &
 ufw allow 80 
 include openMpic key as env var if you'll be testing that
 

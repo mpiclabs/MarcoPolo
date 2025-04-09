@@ -38,7 +38,7 @@ def reset_state():
 def clear_log_files():
     log_files = [f for f in os.listdir(paths.LOGS) if f.endswith('.log')]
     for log_file in log_files:
-        os.remove(os.path.join(script_dir, 'results', log_file))
+        os.remove(os.path.join(script_dir, 'logs', log_file))
   
 def record_results(round_data: RoundData):
     """
