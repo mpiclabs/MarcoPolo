@@ -36,9 +36,9 @@ def reset_state():
         json.dump({"mid_test": False, "curr_node_a": "", "curr_node_b": ""}, file)
       
 def clear_log_files():
-    log_files = [f for f in os.listdir(paths.LOGS) if f.endswith('.log')]
+    log_files = paths.LOGS.glob('*.log')
     for log_file in log_files:
-        os.remove(os.path.join(script_dir, 'logs', log_file))
+        log_file.unlink()
   
 def record_results(round_data: RoundData):
     """
