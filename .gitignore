@@ -166,10 +166,17 @@ terraform/variables.tf
 src/marcopolo/results/*.json
 src/marcopolo/results/state.json
 
+#certbot stuff
+src/marcopolo/certbot_tools/config/*
+src/marcopolo/certbot_tools/logs/*
+src/marcopolo/certbot_tools/work/*
+
+
 #terraform stuff
 # Start of Selection
-terraform/
-!terraform/main.tf
+src/marcopolo/terraform/*
+!src/marcopolo/terraform/main.tf
+!src/marcopolo/terraform/provision_servers.py
 # End of Selection
 
 # unimportant

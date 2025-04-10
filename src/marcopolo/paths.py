@@ -14,6 +14,7 @@ class ProjectPaths:
     LOGS = ROOT / "logs"
     CONFIG = ROOT / "configure"
     CERTBOT_TOOLS = ROOT / "certbot_tools"
+    TERRAFORM = ROOT / "terraform"
     # Define specific files/subdirectories
 
 

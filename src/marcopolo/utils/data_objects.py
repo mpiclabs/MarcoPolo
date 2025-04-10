@@ -1,6 +1,6 @@
 from typing import List, Dict, Optional
 from dataclasses import field
-from datetime import datetime
+from datetime import datetime, timedelta
 from pydantic import BaseModel, HttpUrl, IPvAnyAddress, RootModel
 
 from ..attacks.node import Node
@@ -62,6 +62,7 @@ class RoundData(BaseModel):
     start_time: datetime
     turns: List[TurnData] = []
     end_time: Optional[datetime] = None
+    announcements_time: Optional[timedelta] = None
     errors: List[Optional[str]] = field(default_factory=list)
     something_failed: bool = False
 
