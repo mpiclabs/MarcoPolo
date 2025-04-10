@@ -167,8 +167,10 @@ src/marcopolo/results/*.json
 src/marcopolo/results/state.json
 
 #terraform stuff
+# Start of Selection
 terraform/
 !terraform/main.tf
+# End of Selection
 
 # unimportant
 screenlog.*
