@@ -191,11 +191,12 @@ configure/config.json
 
 # ATTACK SPECIFIC DATA (logs, config, etc)
 src/marcopolo/bgp_pathfinder/config/vultr/nodes.json
-src/marcopolo/bgp_pathfinder/config/vultr/nodes.json
 
 src/marcopolo/certbot_tools/config/*
 src/marcopolo/certbot_tools/logs/*
 src/marcopolo/certbot_tools/work/*
+src/marcopolo/certbot_tools/webroot/*
+src/marcopolo/certbot_tools/token
 
 .DS_Store
 results/.DS_Store

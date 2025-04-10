@@ -5,7 +5,7 @@ authenticator script--
 cleanup script--
 we just delete the acme-challenge file to avoid wasting space
 
-token-- we right to and read from this file to keep track of the token for each Turn
+token-- we right to and read from this file to keep track of the token for each Turn. Doesn't need to exist-- authenticator script will write to it
 
 config, work, logs-- MUST EXIST FOR CERTBOT CERT REQ TO WORK
 Certbot defaults to using:
