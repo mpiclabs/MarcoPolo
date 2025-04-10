@@ -9,10 +9,11 @@ import sys
 import traceback
 import argparse
 
+from marcopolo.bgp_pathfinder import pathfinder
 from marcopolo.paths import paths
 from marcopolo.attacks.round import Round
 from marcopolo.attacks.node import Node
-from marcopolo.utils.loggers import http_logger, summary_logger, error_logger
+from marcopolo.utils.loggers import http_logger, summary_logger, error_logger, general_logger
 from marcopolo.utils.create_files import create_log_files_if_not_exist, create_results_files_if_not_exist
 from marcopolo.utils.loaders import load_config, load_state
 from marcopolo.utils.data_objects import CAResults, CertAuth, RoundData
@@ -37,9 +38,9 @@ def all_attacks(force_restart: bool = False, clear_logs: bool = False):
   None
   """
   if force_restart:
-     reset_state()
+    reset_state()
   if clear_logs:
-     clear_log_files()
+    clear_log_files()
   create_log_files_if_not_exist()
   # Load info needed for game (loaders will raise error if anything's wrong, which should cause a quit)
   config = load_config()
@@ -89,6 +90,7 @@ def main():
     # Basically only exists so we can call it from command line with arguments as a package (e.g. marcopolo.attacks.all_attacks.main --force-restart --clear-logs)
     args = parse_arguments()
     all_attacks(force_restart=args.force_restart, clear_logs=args.clear_logs)
+    pathfinder(["-w"]) # withdraw all announcements
    
 if __name__=="__main__":
     main()

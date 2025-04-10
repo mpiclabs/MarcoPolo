@@ -2,7 +2,10 @@
 import json
 import os
 
+from marcopolo.attacks.node import Node
 from marcopolo.paths import paths
+from marcopolo.utils.data_objects import CAResults, CertAuth
+from marcopolo.utils.loggers import general_logger
 
 
 def create_log_files_if_not_exist():
@@ -10,7 +13,7 @@ def create_log_files_if_not_exist():
     if not os.path.exists(paths.LOGS):
         os.makedirs(paths.LOGS)
 
-    log_files = ['summary.log', 'general.log', 'errors.log', 'http.log']
+    log_files = ['summary.log', 'general.log', 'errors.log', 'http.log', 'rounds.log']
     for log_file in log_files:
         log_file_path = os.path.join(paths.LOGS, log_file)
         if not os.path.exists(log_file_path):
@@ -34,6 +37,7 @@ def create_webroot_dir_if_not_exist():
 
 # In src/marcopolo/utils/create_files.py
 def init_all_files():
+    general_logger.debug("Initializing all files")
     create_results_files_if_not_exist()
     create_log_files_if_not_exist()
     create_webroot_dir_if_not_exist()
