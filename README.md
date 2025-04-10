@@ -101,3 +101,5 @@ Troubleshooting:
 debug log: 
 cert req times out-- the BGP announcement wasn't actually happening because BIRD wasn't connected to vultr's BGP server. Had to restart bird. Never really figured out what happened, I assume it was docker interfering with it.
 LE requests weren't passing-- I forgot that the nodes were coded to forward requests to a hardcoded ip address (the central server), so they were never getting to my local machine. more generally, you need to make sure that the web root folder is being served, so that requests (which will come in the form '/.well-known/acme-challenge/{TOKEN}') actually return the token and pass the challenge. Btw, it's only called web root because it's the root document being served-- all paths are resolved relative to it. you can call it anything, as long as it has the necessary file system within it (namely .well-known/acme-challenge). 
+
+wasn't writing to logs-- the problem was that clear logs was actually deleting the log files after they had been connected to the loggers (which happens on import)-- that was breaking the logger's link to the file, so it could no longer write to it.

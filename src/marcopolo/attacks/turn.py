@@ -30,7 +30,7 @@ from abc import ABC, abstractmethod
 import json
 from .node import Node, NodeResponseError, NodeRequestError
 from marcopolo.utils.loaders import load_config
-from marcopolo.utils.loggers import http_logger, error_logger, general_logger
+from marcopolo.utils.logs_writer import http_logger, error_logger, general_logger
 from marcopolo.utils.data_objects import CertAuth, ListenPoloData, SayMarcoData, TurnData
 from typing import List, Optional, Tuple
 from marcopolo.paths import paths
@@ -211,9 +211,11 @@ class Turn(ABC):
 
         # Returns a request with the token embedded in it
         cert_req =self.generate_request(token)
+        http_logger.info(f"Request: {cert_req}")
         try:
             response = requests.post(**cert_req, timeout=30) # type: ignore
         except requests.exceptions.RequestException as e:
+            error_logger.error(f"Error during POST request to {self.ca.endpoint}: {e}")
             raise Exception(f"Error during POST request to {self.ca.endpoint}: {e}")
 
         # Log request and response (but filter out the long list of VP's returned by the open_mpic implemenation)

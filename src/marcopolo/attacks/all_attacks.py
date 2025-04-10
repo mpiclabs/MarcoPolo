@@ -9,15 +9,15 @@ import sys
 import traceback
 import argparse
 
-from marcopolo.bgp_pathfinder import pathfinder
+from marcopolo.bgp_pathfinder.pathfinder import main as pathfinder
 from marcopolo.paths import paths
 from marcopolo.attacks.round import Round
 from marcopolo.attacks.node import Node
-from marcopolo.utils.loggers import http_logger, summary_logger, error_logger, general_logger
-from marcopolo.utils.create_files import create_log_files_if_not_exist, create_results_files_if_not_exist
+from marcopolo.utils.logs_writer import http_logger, summary_logger, error_logger, general_logger
 from marcopolo.utils.loaders import load_config, load_state
 from marcopolo.utils.data_objects import CAResults, CertAuth, RoundData
-from marcopolo.utils.results_writer import initialize_result_files, reset_state, clear_log_files, record_results
+from marcopolo.utils.results_writer import initialize_result_files, reset_state, record_results
+from marcopolo.utils.logs_writer import clear_log_files
 
 
 def all_attacks(force_restart: bool = False, clear_logs: bool = False):
@@ -37,16 +37,19 @@ def all_attacks(force_restart: bool = False, clear_logs: bool = False):
   Returns:
   None
   """
+  general_logger.debug("Starting all attacks")
+
   if force_restart:
     reset_state()
   if clear_logs:
     clear_log_files()
-  create_log_files_if_not_exist()
+
   # Load info needed for game (loaders will raise error if anything's wrong, which should cause a quit)
   config = load_config()
   state = load_state()
   ca_list = config.certificate_authorities
   nodes = config.nodes
+  
   # if this is a new run, reinitialize result files
   if not state.mid_test: 
      initialize_result_files(ca_list, nodes)
