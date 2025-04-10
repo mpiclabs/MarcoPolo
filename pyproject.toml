@@ -36,7 +36,7 @@ destroy = "marcopolo.servers:destroy"
 config = "marcopolo.configure.config:run_config_script"
 announce = "marcopolo.bgp_pathfinder.pathfinder:main"
 withdraw = "marcopolo.bgp_pathfinder.pathfinder:withdraw"
-init_files = "marcopolo.utils.create_files:init_all_files"
+init_files = "marcopolo.paths:ensure_paths_exist"
 start_webroot_server = "marcopolo.certbot_tools.webroot_server:start_webroot_server"
 stop_webroot_server = "marcopolo.certbot_tools.webroot_server:stop_webroot_server"
 

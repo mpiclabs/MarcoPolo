@@ -26,7 +26,7 @@ summary_handler = logging.FileHandler(paths.LOGS / 'summary.log')
 summary_handler.setLevel(logging.DEBUG)
 summary_handler.setFormatter(log_format)
 summary_logger.addHandler(summary_handler)  # Summary captures everything
-summary_logger.addHandler(general_handler_stdout)  # Summary also goes to stdout
+summary_logger.addHandler(stdout_handler)  # Summary also goes to stdout
 
 # Error logger-- this only includes things that went wrong and need to come to attention
 error_logger = logging.getLogger('error_logger')
@@ -35,7 +35,7 @@ error_handler = logging.FileHandler(f'{paths.LOGS}/errors.log')
 error_handler.setLevel(logging.DEBUG)
 error_handler.setFormatter(log_format)
 error_logger.addHandler(error_handler)
-error_logger.addHandler(general_handler_stdout)  # Errors also go to general.log
+error_logger.addHandler(stdout_handler)  # Errors also go to general.log
 error_logger.addHandler(general_handler_file)  # Errors also go to stdout
 
 # HTTP Logger-- all HTTP communications
