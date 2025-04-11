@@ -237,7 +237,7 @@ class OMTurn(Turn):
             },
             "json": {
                 "check_type": "dcv",
-                "domain_or_ip_target": "example.com",
+                "domain_or_ip_target": "subdomain.arins.pretend-crypto-wallet.com",
                 "dcv_check_parameters": {
                 "validation_method": "website-change",
                 "http_token_path": "/",
