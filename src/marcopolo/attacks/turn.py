@@ -236,19 +236,14 @@ class OMTurn(Turn):
             "x-api-key": os.getenv('MPIC_API_KEY', 'not_set')
             },
             "json": {
-                "orchestration_parameters": {
-                    "perspective_count": 13,
-                    "max_attempts": 1
-                },
                 "check_type": "dcv",
-                "domain_or_ip_target": "subdomain.arins.pretend-crypto-wallet.com",
+                "domain_or_ip_target": "example.com",
                 "dcv_check_parameters": {
-                    "validation_method": "http-generic",
-                    "validation_details": {
-                        "http_token_path": token,
-                        "challenge_value": "test"
-                    }
+                "validation_method": "website-change",
+                "http_token_path": "/",
+                "challenge_value": "test"
             }
+            
             }
         }
 
