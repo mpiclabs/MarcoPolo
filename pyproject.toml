@@ -24,15 +24,21 @@ requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.mypy]
+# 
 check_untyped_defs = true
 warn_return_any = true
 warn_unused_configs = true
-follow_imports="normal"
+follow_imports = "normal"
+disallow_untyped_calls = true
+namespace_packages = true
+explicit_package_bases = true
+mypy_path="src" 
+
 
 [tool.poetry.scripts]
 attacks = "marcopolo.attacks.all_attacks:main"
-provision = "marcopolo.servers:provision"
-destroy = "marcopolo.servers:destroy"
+provision = "marcopolo.terraform.manage_servers:provision"
+destroy = "marcopolo.terraform.manage_servers:destroy"
 config = "marcopolo.configure.config:run_config_script"
 announce = "marcopolo.bgp_pathfinder.pathfinder:main"
 withdraw = "marcopolo.bgp_pathfinder.pathfinder:withdraw"
