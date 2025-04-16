@@ -6,31 +6,6 @@ from marcopolo.paths import paths
 from marcopolo.utils.loaders import load_config
 from marcopolo.paths import paths
 
-def run_terraform_command(command):
-    """
-    Run a Terraform command with the given options.
-
-    :param command: The Terraform command to run.
-    :param options: A dictionary of options to pass to the command.
-    :return: The output of the command.
-    """
-    cmd = [
-        'terraform',
-        f'-chdir={paths.TERRAFORM}',
-        command,
-        f'-var=machines_to_run={machines_to_run}',
-    ]
-    result = subprocess.run(cmd, capture_output=True, text=True)
-    if result.returncode != 0:
-        raise Exception(f"Error running Terraform {command}: {result.stderr}")
-    return result.stdout
-
-def plan_terraform():
-    return run_terraform_command('plan')
-
-def apply_terraform(options):
-    return run_terraform_command('apply')
-
 
 def apply_terraform_with_variable(machines_to_run):
     """
@@ -103,7 +78,29 @@ def provision():
     apply_terraform_with_variable(name_region_dict)
 
 def destroy():
-    run_terraform_command('destroy')
+    cmd = [
+        'terraform',
+        f'-chdir={paths.TERRAFORM}',
+        'destroy'
+    ]
+    
+    print("Running Terraform destroy...")
+    
+    with subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
+        # Continuously read output from stdout line by line
+        for line in process.stdout:
+            print(line, end='')  # Print each line as it is outputted
+        # Optionally, handle stderr if needed
+        stderr_output = process.stderr.read()
+        if stderr_output:
+            print(stderr_output, end='')  # Print any error output
+
+    # Check for errors and print the output
+    if process.wait() != 0:
+        print("terraform destroy has failed, exiting...")
+        exit()
+    else:
+        print("Terraform destroy completed successfully.")
 
 if __name__ == "__main__":
     provision()
