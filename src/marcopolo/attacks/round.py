@@ -64,8 +64,8 @@ class Round(BaseModel):
     pathfinder(["-w"])  # make announcements
     pathfinder(args)    # make announcements
 
-    # wait five minutes
-    time.sleep(30)
+    # wait four minutes
+    time.sleep(240)
     
     with open(f"{paths.LOGS}/http.log", 'a') as file:
         file.write(f"{self.node_a.name}, {self.node_b.name}:\n")
