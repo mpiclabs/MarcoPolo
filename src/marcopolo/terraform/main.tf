@@ -24,8 +24,7 @@ variable "machines_to_run" {
 variable "region_plans" {
   type = map(string)
   default = {
-    "sao" = "vc2-1c-1gb-sc1"
-    "hnl" = "vhp-1c-1gb-amd"
+    "hnl" = "vhp-1c-1gb"
     # Add other region-specific plans as needed
   }
 }
@@ -33,7 +32,7 @@ variable "region_plans" {
 # this generic instance includes a for_each, so it's applied in a loop
 resource "vultr_instance" "instance" {
   for_each         = var.machines_to_run
-  plan             = lookup(var.region_plans, each.value, "vc2-2c-4gb")
+  plan             = lookup(var.region_plans, each.value, "vc2-1c-1gb")
   region           = each.value
   os_id            = 1743
   ssh_key_ids      = [var.ssh_key_id]

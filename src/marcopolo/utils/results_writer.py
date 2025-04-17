@@ -89,17 +89,19 @@ def record_results(round_data: RoundData):
             general_logger.debug(f"Updated results for {ca_name} written to {ca_results_path}")
 
     # Write summary of attack results to log file
+    total_round_duration = (round_data.end_time - round_data.start_time).total_seconds() if round_data.end_time else -1
+    summary_logger.debug(f"Pair: {round_data.node_a.name:<15}, {round_data.node_b.name:<15}:\tCA: {round_data.turns[0].ca.name:<3}\tTime: {total_round_duration:.2f}s")
     for turn_data in round_data.turns:
         if not turn_data.listen_polo_data:
-            summary_logger.error(f"Pair: {turn_data.node_a.name:<15}, {turn_data.node_b.name:<15}:\tERROR: Listen Polo never happened") 
+            summary_logger.error(f"Pair: {turn_data.node_a.name:<15}, {turn_data.node_b.name:<15}:\tCA: {turn_data.ca.name:<3}\tERROR: Listen Polo never happened") 
         else:
             node_a_ips = turn_data.listen_polo_data.node_a_perspectives
             node_b_ips = turn_data.listen_polo_data.node_b_perspectives
             if node_a_ips is not None and node_b_ips is not None:
                 total = len(node_a_ips) + len(node_b_ips)
                 duration = (turn_data.end_time - turn_data.start_time).total_seconds() if turn_data.end_time else -1
-                summary_logger.debug(f"Pair: {turn_data.node_a.name:<15}, {turn_data.node_b.name:<15}:\t{len(node_a_ips):<2}, {len(node_b_ips):<2}\tTotal: {total:>2}\tTime: {duration:.2f}s")
+                summary_logger.debug(f"Pair: {turn_data.node_a.name:<15}, {turn_data.node_b.name:<15}:\tCA: {turn_data.ca.name:<3}\t{len(node_a_ips):<2}, {len(node_b_ips):<2}\tTotal: {total:>2}\tTime: {duration:.2f}s")
             else:
-                summary_logger.debug(f"Pair: {turn_data.node_a.name:<15}, {turn_data.node_b.name:<15}:\tERROR: Missing perspective data")
+                summary_logger.debug(f"Pair: {turn_data.node_a.name:<15}, {turn_data.node_b.name:<15}:\tCA: {turn_data.ca.name:<3}\tERROR: Missing perspective data")
 
-    
+    summary_logger.debug("--------------------------------")
