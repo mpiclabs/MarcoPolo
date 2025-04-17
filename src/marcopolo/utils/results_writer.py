@@ -101,6 +101,8 @@ def record_results(round_data: RoundData):
                 total = len(node_a_ips) + len(node_b_ips)
                 duration = (turn_data.end_time - turn_data.start_time).total_seconds() if turn_data.end_time else -1
                 summary_logger.debug(f"Pair: {turn_data.node_a.name:<15}, {turn_data.node_b.name:<15}:\tCA: {turn_data.ca.name:<3}\t{len(node_a_ips):<2}, {len(node_b_ips):<2}\tTotal: {total:>2}\tTime: {duration:.2f}s")
+                if turn_data.ca.num_perspectives is not None and total<turn_data.ca.num_perspectives:
+                    error_logger.error(f"Pair: {turn_data.node_a.name:<15}, {turn_data.node_b.name:<15}:\tCA: {turn_data.ca.name:<3}\tERROR: Not enough perspectives collected ({total}/{turn_data.ca.num_perspectives})")
             else:
                 summary_logger.debug(f"Pair: {turn_data.node_a.name:<15}, {turn_data.node_b.name:<15}:\tCA: {turn_data.ca.name:<3}\tERROR: Missing perspective data")
 
