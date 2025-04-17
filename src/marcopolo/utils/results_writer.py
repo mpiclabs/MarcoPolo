@@ -57,7 +57,7 @@ def record_results(round_data: RoundData):
     print("General Logger Handlers in results_writer:", general_logger.handlers)
 
     # Write full round data to log file
-    with open(f'{paths.LOGS}/rounds.log', 'w') as file:
+    with open(f'{paths.LOGS}/rounds.log', 'a') as file:
         json.dump(round_data.model_dump(mode='json'), file, indent=4)
         general_logger.debug("Round data recorded")
 

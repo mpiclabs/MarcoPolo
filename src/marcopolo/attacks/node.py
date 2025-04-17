@@ -3,6 +3,7 @@ from typing import List
 import requests
 
 from pydantic import BaseModel, IPvAnyAddress
+from marcopolo.utils.logs_writer import http_logger
 
 class Node(BaseModel):
     name: str
@@ -24,11 +25,13 @@ class Node(BaseModel):
         """
         try:
             # PART ONE: REQUEST. If something goes wrong, raises request error.
+
             response = requests.get(
                 f"http://{self.ip}/getips",
                 params={"token": token},
                 timeout=5
             )
+            http_logger.info(f"Response to getips for node {self.name}: {response.text}")
             response.raise_for_status()
 
             # PART TWO: RESPONSE. If something goes wrong, raises response error.
