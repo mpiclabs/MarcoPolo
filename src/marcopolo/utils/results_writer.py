@@ -91,15 +91,15 @@ def record_results(round_data: RoundData):
     # Write summary of attack results to log file
     for turn_data in round_data.turns:
         if not turn_data.listen_polo_data:
-            summary_logger.debug(f"Pair: {turn_data.node_a.name:<15}, {turn_data.node_b.name:<15}:\tERROR: Listen Polo never happened") 
+            summary_logger.error(f"Pair: {turn_data.node_a.name:<15}, {turn_data.node_b.name:<15}:\tERROR: Listen Polo never happened") 
         else:
             node_a_ips = turn_data.listen_polo_data.node_a_perspectives
             node_b_ips = turn_data.listen_polo_data.node_b_perspectives
             if node_a_ips is not None and node_b_ips is not None:
                 total = len(node_a_ips) + len(node_b_ips)
                 duration = (turn_data.end_time - turn_data.start_time).total_seconds() if turn_data.end_time else -1
-                summary_logger.info(f"Pair: {turn_data.node_a.name:<15}, {turn_data.node_b.name:<15}:\t{len(node_a_ips):<2}, {len(node_b_ips):<2}\tTotal: {total:>2}\tTime: {duration:.2f}s")
+                summary_logger.debug(f"Pair: {turn_data.node_a.name:<15}, {turn_data.node_b.name:<15}:\t{len(node_a_ips):<2}, {len(node_b_ips):<2}\tTotal: {total:>2}\tTime: {duration:.2f}s")
             else:
-                summary_logger.info(f"Pair: {turn_data.node_a.name:<15}, {turn_data.node_b.name:<15}:\tERROR: Missing perspective data")
+                summary_logger.debug(f"Pair: {turn_data.node_a.name:<15}, {turn_data.node_b.name:<15}:\tERROR: Missing perspective data")
 
     

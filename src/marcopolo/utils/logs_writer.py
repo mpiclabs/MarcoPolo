@@ -45,7 +45,7 @@ http_handler = logging.FileHandler(f'{paths.LOGS}/http.log')
 http_handler.setLevel(logging.DEBUG)
 http_handler.setFormatter(log_format)
 http_logger.addHandler(http_handler)
-http_logger.addHandler(general_handler_file)  # HTTP logs also go to stdout
+#http_logger.addHandler(general_handler_file)  # HTTP logs also go to stdout
 
 
 
@@ -54,4 +54,4 @@ def clear_log_files():
     for log_file in log_files:
         with open(log_file, 'w'):
             pass  # Opening with 'w' truncates the file
-    general_logger.debug("Log files cleared")
+        general_logger.debug(f"{log_file} cleared")

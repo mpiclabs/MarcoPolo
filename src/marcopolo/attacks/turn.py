@@ -43,10 +43,8 @@ class TurnFactory:
     @staticmethod
     def create(ca: CertAuth, node_a: Node, node_b: Node):
         ca_name = ca.name.lower()
-        if ca_name == "ggf":
-            return GGFTurn(ca, node_a, node_b)
-        elif ca_name == "ggp":
-            return GGPTurn(ca, node_a, node_b)
+        if ca_name == "gcp":
+            return GCPTurn(ca, node_a, node_b)
         elif ca_name == "om":
             return OMTurn(ca, node_a, node_b)
         elif ca_name == "cf":
@@ -55,6 +53,8 @@ class TurnFactory:
             return LETurn(ca, node_a, node_b)
         elif ca_name=="az":
             return AzureTurn(ca, node_a, node_b)
+        elif ca_name=="multi-om":
+            return MultiOMTurn(ca, node_a, node_b)
         else:
             raise ValueError(f"Unknown certificate authority: {ca_name}")
 
@@ -65,7 +65,7 @@ class Turn(ABC):
         self.ca=ca
 
     @abstractmethod
-    def generate_request(self, token):
+    def generate_request(self, token) -> dict:
         pass
 
     def execute(self)->TurnData:
@@ -167,6 +167,10 @@ class Turn(ABC):
                 response.raise_for_status()
                 # if 207 in christines, or 200 with mpic_completed=false in mpic, then try again
                 # we have to communicate with all perspectives correctly
+                if self.ca.name == "om" and response.json().get('mpic_completed') is not True:
+                    raise Exception(f"Not all perspectives were contacted for {self.ca.name}.")
+                if (self.ca.name == "gcp" or self.ca.name == "az") and response.status_code == 207:
+                    error_logger.warning(f"Response code 207 raised for the following response: {response.text}")
                 return SayMarcoData(
                         token = token,
                         response = response.text,
@@ -190,7 +194,7 @@ class Turn(ABC):
             error_message = error_message
         )
     
-    def _single_request(self):
+    def _single_request(self) -> Tuple[requests.Response, str]:
         """
         This method performs a single request to the certificate authority (CA) endpoint.
         It generates a unique token for the request, constructs the request payload, 
@@ -213,7 +217,7 @@ class Turn(ABC):
         cert_req =self.generate_request(token)
         http_logger.info(f"Request: {cert_req}")
         try:
-            response = requests.post(**cert_req, timeout=30) # type: ignore
+            response = requests.post(**cert_req, timeout=30) 
         except requests.exceptions.RequestException as e:
             error_logger.error(f"Error during POST request to {self.ca.endpoint}: {e}")
             raise Exception(f"Error during POST request to {self.ca.endpoint}: {e}")
@@ -225,10 +229,117 @@ class Turn(ABC):
         
         return response, token
         
+class MultiOMTurn(Turn):
+    def generate_request(self, endpoint, api_key, token) -> dict:
+        '''
+        Differes from standard OMTurn request only in that endpoint and api_key are specified as arguments rather than being pulled from config sources (config file and env vars) because this is hardcoded for now.
+        '''
+        general_logger.info(f"Generating request for endpoint: {endpoint} and api_key: {api_key}")
+        return {
+            "url": endpoint,
+            "headers": {
+            "Content-Type": "application/json",
+            "x-api-key": api_key
+            },
+            "json": {
+                "check_type": "dcv",
+                "domain_or_ip_target": "subdomain.arins.pretend-crypto-wallet.com",
+                "dcv_check_parameters": {
+                "validation_method": "website-change",
+                "http_token_path": "/",
+                "challenge_value": token
+            }
+            }
+        }
+    
+    def _single_request(self) -> Tuple[List[requests.Response], str]: # type: ignore
+        """
+        Different from standard OMTurn request in that it makes a single request to each of the three deployments using a single token, and returns all responses along with the token.
+        """
+        # Create a random token to identify the cert-request
+        # Note: ClourFlare requires a 21 character token, or it'll respond with a 400-- "Not enough entropy in token"
+        token = ''.join(random.choices(string.ascii_letters + string.digits, k=21)) 
+
+        deployments = [
+            {'endpoint': 'https://2tg75ddu7g.execute-api.us-east-2.amazonaws.com/v1/mpic', 
+             'api_key': 'fwSmPFJMNP34H7NQEPB1v6jls8MVypDW5gf29LHc'}, 
+            {'endpoint': 'https://050htr2pbf.execute-api.us-east-2.amazonaws.com/v1/mpic', 
+             'api_key': 'Z9a2PuHiAX4xYHcdExlGb111nX94QZIq60PJHhYB'}, 
+            {'endpoint': 'https://h03scwrlpd.execute-api.us-east-2.amazonaws.com/v1/mpic', 
+             'api_key': 'HWt9kekLwlafJvsaamJNJ6WeQI3ScMoo6Jrm5e8G'}
+             ]
+        responses = []
+        for deployment in deployments:
+            try:
+                # Returns a request with the token embedded in it
+                general_logger.debug(f"Generating request for endpoint number {deployments.index(deployment)}")
+                cert_req =self.generate_request(deployment['endpoint'], deployment['api_key'], token)
+                http_logger.info(f"Request: {cert_req}")
+                response = requests.post(**cert_req, timeout=30)
+                http_logger.info(f"Response: {response.text}")
+                responses.append(response) # type: ignore
+            except requests.exceptions.RequestException as e:
+                error_logger.error(f"Error during POST request to {deployment['endpoint']}: {e}")
+                raise Exception(f"Error during POST request to {deployment['endpoint']}: {e}")
+        
+        return responses, token
+    
+    def say_marco(self)->SayMarcoData:
+        """
+        This method attempts to perform a certificate request up to five times. If successful (response status code 200),
+        it returns the token and the number of attempts made. If all attempts fail, it returns an error message.
+
+        Returns:
+            SayMarcoData: An object containing:
+                - token (str): The token received from the request.
+                - response (Optional[str]): The response from the request, if successful.
+                - num_tries (int): The number of attempts made.
+                - failed (bool): Indicates if the request failed.
+                - error_message (Optional[str]): Error message if the request failed.
+        """
+        retries = 5
+        response = None
+        error = None
+        token = None
+        for attempt_num in range(1, retries+1):
+            try:
+                responses, token = self._single_request()
+                
+                for response in responses:
+                    response.raise_for_status()
+                    # if mpic_completed=false in mpic, then try again
+                    if response.json().get('mpic_completed') is not True:
+                        error_logger.info(f"Not all perspectives were contacted. here is the full response: {response}")
+                        raise Exception("Not all perspectives were contacted")
+                    
+                return SayMarcoData(
+                        token = token,
+                        response = ''.join([response.text for response in responses]),
+                        num_tries = attempt_num,
+                        failed = False,
+                        error_message = None
+                    )
+            except Exception as e:
+                    error = e
+                    print(f"Attempt {attempt_num} failed with error {e}. Waiting 10 seconds and retrying...")
+                    error_logger.info(f"Attempt {attempt_num} failed with error {e}. Waiting 10 seconds and retrying...")
+                    time.sleep(10)
+
+        # log error
+        error_message = f"Final attempt failed with error: {error}"
+        error_logger.info(error_message)
+        return SayMarcoData(
+            token = None,
+            response = ''.join([response.text for response in responses]),
+            num_tries = retries,
+            failed = True,
+            error_message = error_message
+        )
+        
 
 
 class OMTurn(Turn):
-    def generate_request(self, token):
+    def generate_request(self, token) -> dict:
         return {
             "url": self.ca.endpoint,
             "headers": {
@@ -246,10 +357,12 @@ class OMTurn(Turn):
             
             }
         }
+    
 
-class GGFTurn(Turn):
 
-    def generate_request(self, token):
+class GCPTurn(Turn):
+
+    def generate_request(self, token) -> dict:
         return {
             "url": self.ca.endpoint,
             "headers": {
@@ -263,23 +376,9 @@ class GGFTurn(Turn):
             }
         }
 
-class GGPTurn(Turn):
-    def generate_request(self, token):
-        return {
-            "url": self.ca.endpoint,
-            "headers": {
-                "Content-Type": "application/json"
-            },
-            "json": {
-                "domain": "subdomain.arins.pretend-crypto-wallet.com",
-                "token": token,
-                "node_a": self.node_a.name,
-                "node_b": self.node_b.name,
-            }
-        }
 
 class CFTurn(Turn):
-    def generate_request(self, token):
+    def generate_request(self, token) -> dict:
         return {
             "url": self.ca.endpoint,
             "headers": {

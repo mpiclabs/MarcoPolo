@@ -11,11 +11,12 @@ from typing import Literal
 
 CompatibleCertAuth = Literal[
     "ggf",
-    "ggp",
+    "gcp",
     "om",
     "cf",
     "le",
-    "az"
+    "az",
+    "multi-om"
 ]
 
 class CertAuth(BaseModel):
@@ -124,3 +125,7 @@ class State(BaseModel):
 
 
 CAResults = dict[str, dict[str, list[str]]]
+
+
+
+
