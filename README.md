@@ -11,10 +11,15 @@ This codebase tests the resilience of a Certificate Authority (CA) implementatio
    - Log files-- these log the results of an attack
 If you plan on modifying and pushing any code, run the following commands before doing so:
 ```bash
-git update-index --skip-worktree terraform/variables.tf
-git update-index --skip-worktree logs/*.log
-git update-index --skip-worktree results/*.json
+git update-index --skip-worktree bgp_pathfinder/config/master.json
+git update-index --skip-worktree bgp_pathfinder/config/cmd.json
+git update-index --skip-worktree bgp_pathfinder/config/vultr/nodes.json
+
+git update-index --skip-worktree configure/pathfinder_config/master.json
+git update-index --skip-worktree configure/pathfinder_config/cmd.json
+git update-index --skip-worktree configure/pathfinder_config/vultr/nodes.json
 ```
+
 This ensures that no sensitive or instance-specific files are pushed to the remote repository, which is visible to others.
 This will ensure you will not accidentally push configuration state files, which are unique to a users configuration
 ## Using this package
@@ -101,5 +106,6 @@ Troubleshooting:
 debug log: 
 cert req times out-- the BGP announcement wasn't actually happening because BIRD wasn't connected to vultr's BGP server. Had to restart bird. Never really figured out what happened, I assume it was docker interfering with it.
 LE requests weren't passing-- I forgot that the nodes were coded to forward requests to a hardcoded ip address (the central server), so they were never getting to my local machine. more generally, you need to make sure that the web root folder is being served, so that requests (which will come in the form '/.well-known/acme-challenge/{TOKEN}') actually return the token and pass the challenge. Btw, it's only called web root because it's the root document being served-- all paths are resolved relative to it. you can call it anything, as long as it has the necessary file system within it (namely .well-known/acme-challenge). 
-
 wasn't writing to logs-- the problem was that clear logs was actually deleting the log files after they had been connected to the loggers (which happens on import)-- that was breaking the logger's link to the file, so it could no longer write to it.
+
+How are we actually recording the communications between perspectives and our nodes, and matching them to specific attacks? Well, the key lies in the use of tokens by CA's. When you request a cert through CertBot, it will come up with a random token, and tell you to put a validation file at the path ending in that token (the validation file is a combination of the token and a unique identifier of your account). Taking advantage of this, we simply captured the token used and stored it as a marker for that attack. We could then search through the logs on each node (which were configured to store ./well-known requests) for requests that included that token in the path-- the ip addresses of these requests were the perspectives that routed to that node after BGP propogation from both victim and attacker. It was easier for our mock CAs-- or each of our networks we set it up such that upon receiving a cert req with a unique token, each perspective simply made a request to {DOMAIN}/.well-known/{ca_identifier}, and we could track those down the same way. For OpenMPIC, the terminology is slightly different-- the token refers to the challenge, and the path at which it is to be stored is explicated as a parameter. So we put the token as the path, and leave out the 'challenge.'
