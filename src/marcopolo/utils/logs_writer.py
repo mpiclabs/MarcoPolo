@@ -49,7 +49,7 @@ http_logger.addHandler(http_handler)
 
 
 
-def clear_log_files():
+def clear_log_files() -> None:
     log_files = paths.LOGS.glob('*.log')
     for log_file in log_files:
         with open(log_file, 'w'):

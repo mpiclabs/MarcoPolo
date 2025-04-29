@@ -57,9 +57,12 @@ def all_attacks(force_restart: bool = False, clear_logs: bool = False):
   # find starting indices
   def find_index_by_name(name: str) -> int:
       return next(i for i, node in enumerate(nodes) if node.name == name)
-
+  
   a_start_index = find_index_by_name(state.curr_node_a) if state.mid_test else 0
   b_start_index = find_index_by_name(state.curr_node_b) if state.mid_test else a_start_index + 1
+
+  if state.mid_test:
+     general_logger.info(f"Mid test: starting from {state.curr_node_a} and {state.curr_node_b}")
 
   for i, node_a in enumerate(nodes[a_start_index:], start=a_start_index):
     for node_b in nodes[b_start_index if i==a_start_index else i+1:]:
@@ -82,14 +85,14 @@ def all_attacks(force_restart: bool = False, clear_logs: bool = False):
 
   reset_state()
       
-def parse_arguments():
+def parse_arguments() -> argparse.Namespace:
     """Parse command line arguments for the Marco-Polo attacks."""
     parser = argparse.ArgumentParser(description='Run Marco-Polo attacks')
     parser.add_argument('--force-restart', action='store_true', help='Force restart the test from the beginning')
     parser.add_argument('--clear-logs', action='store_true', help='Clear all log files before starting')
     return parser.parse_args()
 
-def main():
+def main() -> None:
     # Basically only exists so we can call it from command line with arguments as a package (e.g. marcopolo.attacks.all_attacks.main --force-restart --clear-logs)
     args = parse_arguments()
     all_attacks(force_restart=args.force_restart, clear_logs=args.clear_logs)

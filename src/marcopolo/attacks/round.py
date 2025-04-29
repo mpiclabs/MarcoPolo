@@ -33,8 +33,9 @@ class Round(BaseModel):
   bgp_prefix: str
   node_a: Node
   node_b: Node
+  rpki: bool
 
-  def execute(self):
+  def execute(self) -> RoundData:
     """
     Executes the round of Marco-Polo for the given certificate authorities and nodes. Consists of making
     BGP announcements, executing Marco-Polo turns for each CA, and collecting the results.

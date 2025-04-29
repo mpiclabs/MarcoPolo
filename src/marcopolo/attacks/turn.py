@@ -230,7 +230,7 @@ class Turn(ABC):
         return response, token
         
 class MultiOMTurn(Turn):
-    def generate_request(self, endpoint, api_key, token) -> dict:
+    def generate_request(self, endpoint, api_key, token) -> dict: # type: ignore
         '''
         Differes from standard OMTurn request only in that endpoint and api_key are specified as arguments rather than being pulled from config sources (config file and env vars) because this is hardcoded for now.
         '''

@@ -9,6 +9,7 @@
             "ip": "0.0.0.0"
         }
     ],
+    "bgp_propogation_delay": 150,
     "vultr_regions": {
         "example_node_3": "example_region_1",
         "example_node_1": "example_region_2",

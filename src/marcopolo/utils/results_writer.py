@@ -32,7 +32,7 @@ def initialize_result_files(ca_list: list[CertAuth], nodes: list[Node]):
       json.dump(data, file)
       general_logger.debug(f"Results file {ca.name}_results.json created")
 
-def reset_state():
+def reset_state() -> None:
     with open(f'{paths.RESULTS}/state.json', 'w') as file:
         json.dump({"mid_test": False, "curr_node_a": "", "curr_node_b": ""}, file)
         general_logger.debug("State reset")
