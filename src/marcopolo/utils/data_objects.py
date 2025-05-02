@@ -60,6 +60,7 @@ class RoundData(BaseModel):
     node_b: Node
     cas: list[CertAuth]
     bgp_prefix: str
+    bgp_propagation_delay: int
     start_time: datetime
     turns: List[TurnData] = []
     end_time: Optional[datetime] = None
@@ -117,6 +118,7 @@ class Config(BaseModel):
     nodes: List[Node]
     vultr_regions: Dict[str, Region]
     certificate_authorities: List[CertAuth]
+    bgp_propagation_delay: int
 
 class State(BaseModel):
     mid_test: bool

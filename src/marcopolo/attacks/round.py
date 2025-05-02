@@ -31,9 +31,9 @@ class Round(BaseModel):
   """
   cas: list[CertAuth]
   bgp_prefix: str
+  bgp_propagation_delay: int
   node_a: Node
   node_b: Node
-  rpki: bool
 
   def execute(self) -> RoundData:
     """
@@ -59,14 +59,17 @@ class Round(BaseModel):
         start_time=datetime.datetime.now(),
         cas=self.cas,
         bgp_prefix=self.bgp_prefix,
+        bgp_propagation_delay=self.bgp_propagation_delay,
+        
         turns=[]
     )
-    args = ["-d", self.node_a.name, self.node_b.name, "-i", self.bgp_prefix]
+    args = ["-d", self.node_a.name, "-i", self.bgp_prefix]
+    args = ["-d",self.node_b.name, "-i", self.bgp_prefix, "-o", "20473:6001"]
     pathfinder(["-w"])  # make announcements
     pathfinder(args)    # make announcements
 
     # wait four minutes
-    time.sleep(240)
+    time.sleep(self.bgp_propagation_delay)
     
     with open(f"{paths.LOGS}/http.log", 'a') as file:
         file.write(f"{self.node_a.name}, {self.node_b.name}:\n")
