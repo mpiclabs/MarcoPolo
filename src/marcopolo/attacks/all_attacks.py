@@ -76,7 +76,7 @@ def all_attacks(force_restart: bool = False, clear_logs: bool = False):
       #run attack and record results
       round = Round(
           cas=ca_list,
-          bgp_prefix="66.180.191.0/24",
+          bgp_prefix="66.180.190.0/24",
           bgp_propagation_delay=config.bgp_propagation_delay,
           node_a=node_a,
           node_b=node_b
