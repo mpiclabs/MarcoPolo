@@ -181,7 +181,7 @@ def pathfinder(srcNode, dstNode, prefix, masterConfig, communities, engine, path
 
 
 
-def main(raw_args=None):
+def main(raw_args=None) -> None:
 	dirname = os.path.dirname(os.path.abspath(__file__))
 	sys.path.append(dirname)  # Add the directory containing the engines package to the Python path
 	args = parse_args(raw_args)

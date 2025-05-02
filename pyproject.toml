@@ -2,8 +2,9 @@
 name = "marcopolo"
 version = "0.1.0"
 description = "marcopolo"
+packages = [{ include = "marcopolo", from = "src" }]
 authors = [
-    {name = "Ari Brown",email = "yabrown@princeton.edu"}
+    {name = "Ari Brown",email = "ari.l.braun@gmail.com"}
 ]
 readme = "README.md"
 requires-python = ">=3.11"
@@ -45,10 +46,3 @@ withdraw = "marcopolo.bgp_pathfinder.pathfinder:withdraw"
 init_files = "marcopolo.paths:ensure_paths_exist"
 start_webroot_server = "marcopolo.certbot_tools.webroot_server:start_webroot_server"
 stop_webroot_server = "marcopolo.certbot_tools.webroot_server:stop_webroot_server"
-
-
-[tool.poetry]
-name = "marcopolo"
-version = "0.1.0"
-description = "marcopolo"
-packages = [{ include = "marcopolo", from = "src" }]

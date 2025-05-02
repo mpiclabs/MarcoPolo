@@ -5,7 +5,7 @@ import os
 
 #This file take config.json in this file and copies it into the three places it's needed in the pathfinder module-- 
 # vultr/config.json, cmd.json, master.json. The first  
-def update_pathfinder_config():
+def update_pathfinder_config() -> None:
     this_dir = os.path.dirname(os.path.abspath(__file__))
     with open(f"{this_dir}/config.json", 'r') as file:
         nodes = {node['name']: node['ip'] for node in json.load(file)["nodes"]}
