@@ -63,8 +63,8 @@ class Round(BaseModel):
         
         turns=[]
     )
-    args_a = ["-d", self.node_a.name, "-i", self.bgp_prefix, "-o", "20473:6001"]
-    args_b = ["-d",self.node_b.name, "-i", self.bgp_prefix]
+    args_a = ["-d", self.node_a.name, "-i", self.bgp_prefix]
+    args_b = ["-d",self.node_b.name, "-i", self.bgp_prefix, "-o", "20473:6001"]
     pathfinder(["-w"])  # make announcements
     pathfinder(args_a)    # make announcements for node_a
     pathfinder(args_b)    # make announcements for node_b
